@@ -5,10 +5,12 @@ import argparse
 import torch
 GPU_NUM = 1
 
-device = torch.device(
-    f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
-torch.cuda.set_device(device)  # change allocation of current GPU
-# print ('current cuda device ', torch.cuda.current_device()) # check
+# model.to(device)
+# tensor.to(device)
+
+device = torch.device('cpu')#(f'cpu:{GPU_NUM}' if torch.cpu.is_available() else 'cpu')
+# torch.cpu.set_device(device)  # change allocation of current GPU
+# print ('current cpu device ', torch.cpu.current_device()) # check
 
 
 def str2bool(v):

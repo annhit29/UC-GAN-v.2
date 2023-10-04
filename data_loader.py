@@ -22,6 +22,7 @@ def get_loader(
         batch_size=batch_size,
         shuffle=(mode == "train"),
         num_workers=num_workers,
+
     )
     return data_loader
 

@@ -131,8 +131,7 @@ class Solver(object):
         self.beta2 = config.beta2
 
         # Miscellaneous.
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")# if torch.cpu.is_available() else "cpu")
 
         # Build the model and tensorboard.
         self.build_model()

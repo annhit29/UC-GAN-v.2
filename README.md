@@ -11,7 +11,7 @@ Torch implementation for learning a mapping between Plain text to Cipher Text
 ### Prerequisites
 
 - Linux or OSX
-- NVIDIA GPU + CUDA CuDNN (CPU mode and CUDA without CuDNN may work with minimal modification, but untested)
+- NVIDIA GPU + cpu CuDNN (CPU mode and cpu without CuDNN may work with minimal modification, but untested)
 
 ### Getting Started
 
