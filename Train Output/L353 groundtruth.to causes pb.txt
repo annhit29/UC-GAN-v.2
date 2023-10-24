@@ -5,7 +5,6 @@ import torch.nn.functional as F
 import numpy as np
 import copy
 import os
-import torch.nn as nn
 
 
 LETTERS = 'abcdefghijklmnopqrstuvwxyz'
@@ -116,9 +115,8 @@ class Solver(object):
         self.data_loader_test = data_loader_test
 
         # Model configurations.
-        self.c_dim = config.c_dim #=4
-        # print("c_dim from solver.py= ", self.c_dim)
-        self.g_conv_dim = config.g_conv_dim #=32 
+        self.c_dim = config.c_dim
+        self.g_conv_dim = config.g_conv_dim
         self.d_conv_dim = config.d_conv_dim
         self.lambda_cls = config.lambda_cls
         self.lambda_rec = config.lambda_rec
@@ -141,7 +139,6 @@ class Solver(object):
 
     def build_model(self):
         """Create a generator and a discriminator."""
-        
         self.G = Generator(self.g_conv_dim, self.c_dim)
         self.D = Discriminator(
             self.d_conv_dim, self.c_dim
@@ -191,9 +188,7 @@ class Solver(object):
 
     def classification_loss(self, logit, target):
         """Compute binary or softmax cross entropy loss."""
-        # print("logit=", logit)
-        # print("target = ", target)
-        return F.cross_entropy(logit, target) #`torch.nn.functional.cross_entropy(input, target)` can receive a multi-class `target` (classes 0, 1, 2 and 3)
+        return F.cross_entropy(logit, target)
 
     def StoE2(self, x):
         """from Simplex to Embedding"""
@@ -307,6 +302,7 @@ class Solver(object):
             # Fetch real images and labels.
             try:
                 x_real, label_org = next(data_iter)
+                # print("label_org= ", label_org) #has 0s 1s 2s abd 3s
             except:
                 data_iter = iter(data_loader)
                 x_real, label_org = next(data_iter)
@@ -314,12 +310,14 @@ class Solver(object):
             # Compute loss with real images.
 
             # Generate target domain labels randomly.
+            # print("label_org.size(0)= ",label_org.size(0))
             rand_idx = torch.randperm(label_org.size(0))
+            # print("rand_idx= ", rand_idx)
             label_trg = label_org[rand_idx]
+            # print("label_trg= ", label_trg) #has 0s 1s 2s abd 3s
 
             c_org = self.label2onehot(label_org, self.c_dim)
             c_trg = self.label2onehot(label_trg, self.c_dim)
-            
 
             x_real = torch.reshape(
                 x_real, (x_real.size(0), x_real.size(1), 100))
@@ -343,7 +341,6 @@ class Solver(object):
             # USING Simplex function
             ######################################
             x_groundtruth = self.Simplex(x_real)  # batch,  26, 100
-            # print("x_groundtruth = ", x_groundtruth)
             x_real_tmp = self.StoE2(x_groundtruth)  # batch, 256, 100
 
             # embedding line : (100, 26) * (26, 256) = (100, 256)
@@ -352,14 +349,14 @@ class Solver(object):
             d_loss_real = torch.mean((out_src-1)**2)
             d_loss_cls = self.classification_loss(out_cls, label_org)
 
-            # print("still OK")
-            # x_groundtruth = x_groundtruth.to(self.device) # why convert to cuda if already cuda?
-            # print("x_groundtruth.to = ", x_groundtruth)
+            
+	    x_groundtruth = x_groundtruth.to(self.device)
             x_real_tmp = x_real_tmp.to(self.device)
 
             # Compute loss with fake images.
-            # print("tout va bien mais pas ap l'appel de G -> cf class Generator & Discriminator: `c_dim doit être = 4`!")
-            x_fake = self.G(x_groundtruth, c_trg) #error comes from label index outofrange,so c_trg
+            
+            print("c_trg = ", c_trg)
+            x_fake = self.G(x_groundtruth, c_trg)
             x_fake = self.StoE2(x_fake)
 
             out_src, out_cls = self.D(x_fake.detach())
@@ -1067,3 +1064,4 @@ class Solver(object):
             torch.save({'accu_tmp01': accu_tmp01, 'accu_tmp02': accu_tmp02, 'accu_tmp03': accu_tmp03,
                         'accu_CtoV': accu_CtoV, 'accu_CtoS': accu_CtoS, 'accu_VtoC': accu_VtoC,
                         'accu_VtoS': accu_VtoS, 'accu_StoC': accu_StoC, 'accu_StoV': accu_StoV}, AC_path)
+

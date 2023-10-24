@@ -11,8 +11,8 @@ def get_loader(
 ):
     """Build and return a data loader."""
     transform = []
-    transform.append(T.Grayscale())
-    transform.append(T.ToTensor())   # from 0 to 1
+    transform.append(T.Grayscale()) #compress RGB
+    transform.append(T.ToTensor())   # Normalize from [0, 255] to [0, 1]
     transform = T.Compose(transform)
 
     dataset = ImageFolder(image_dir, transform)

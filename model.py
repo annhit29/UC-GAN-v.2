@@ -87,16 +87,22 @@ class ResidualBlock(nn.Module):
 class Generator(nn.Module):
     """ Generator block for Conv1d """
 
-    def __init__(self, out_dim=32, c_dim=2):
+    def __init__(self, out_dim=32, c_dim=2): #these default values will be overwritten (cf L98 & 99), so no effects here
+        '''
+        the values of out_dim and c_dim are being overwritten within the __init__ method (aka Generator's constructor) of the Generator class, 
+        which means that any values you pass as arguments when creating an instance of the Generator class will be ignored.
+        '''
         super(Generator, self).__init__()
-
-        layers = []
-
+        # print("G's c_dim from model.py default=", c_dim)
+        # print("G's out_dim from model.py default=", out_dim)
         c_dim = 4
         out_dim = 64
 
         self.Multiply = Multiply()
-
+        # print("G's c_dim from model.py after=", c_dim)
+        # print("G's out_dim from model.py after=", out_dim)
+        
+        layers = []
         # Concatenate x and c
         # So, the dim. is 258 (hidden_size(default=256) + c dim(default=2))
         layers.append(self.Multiply)
@@ -147,11 +153,20 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     """Discriminator network with PatchGAN for Conv1d."""
 
-    def __init__(self, in_size=100, out_dim=32, c_dim=2):
+    def __init__(self, in_size=100, out_dim=32, c_dim=2): #these default values will be overwritten after (cf L165 & 166)
         super(Discriminator, self).__init__()
+        '''
+        the values of out_dim and c_dim are being overwritten within the __init__ method (aka Discriminator's constructor) of the Discriminator class, 
+        which means that any values you pass as arguments when creating an instance of the Discriminator class will be ignored.
+        '''
+        # print("D's c_dim from model.py default=", c_dim)
+        # print("D's out_dim from model.py default=", out_dim)
 
+        c_dim = 4 #fixed: there was no this line so caused the entire model to have thebug
         out_dim = 64
 
+        # print("D's c_dim from model.py after=", c_dim)
+        # print("D's out_dim from model.py default=", out_dim)
         layers = []
         layers.append(nn.Dropout(p=0.5, inplace=False))
         layers.append(nn.Conv1d(512, out_dim, 14, 2, 6))

@@ -4,18 +4,17 @@ from solver import Solver
 import argparse
 import torch
 # import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = "" <- this wasn't the bug
+# os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-# GPU_NUM = 0 # change to 0 coz I only have 1 GPU: GPU nb0. (run on GoogleColab)
-GPU_NUM = 1 # change to 1 coz I have 2 GPU: GPU nb0 and GPU nb1. (run on Kaggle)
+GPU_NUM = 0 # change to 0 coz I only have 1 CPU: CPU nb0.
 
 device = torch.device(
     f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
-# torch.cuda.set_device(0) #argument is 0 coz I only have 1 GPU: GPU nb0. (run on GoogleColab)
-torch.cuda.set_device(1) #argument is 1 coz I have 2 GPU: GPU nb0 and GPU nb1. (run on Kaggle)
+torch.cuda.set_device(0) #argument is 0 coz I only have 1 CPU: CPU nb0. # change allocation of current GPU
 
 def str2bool(v):
     return v.lower() in ("true")
+
 
 def main(config):
     # For fast training.
