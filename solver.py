@@ -117,7 +117,7 @@ class Solver(object):
 
         # Model configurations.
         self.c_dim = config.c_dim #=4
-        # print("c_dim from solver.py= ", self.c_dim)
+        # print("c_dim from solver.py = ", self.c_dim)
         self.g_conv_dim = config.g_conv_dim #=32 
         self.d_conv_dim = config.d_conv_dim
         self.lambda_cls = config.lambda_cls
@@ -134,6 +134,7 @@ class Solver(object):
 
         # Miscellaneous.
         self.device = torch.device("cpu")# if torch.cpu.is_available() else "cpu")
+        # self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #fixme: for some reasons (ridiculous??) the code works w/ cpu but NOT gpu. (yet `torch.cuda.is_available()` = True)
 
         # Build the model and tensorboard.
         self.build_model()

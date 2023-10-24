@@ -13,6 +13,7 @@ device = torch.device(
     f'cuda:{GPU_NUM}' if torch.cuda.is_available() else 'cpu')
 # torch.cuda.set_device(0) #argument is 0 coz I only have 1 GPU: GPU nb0. (run on GoogleColab)
 torch.cuda.set_device(1) #argument is 1 coz I have 2 GPU: GPU nb0 and GPU nb1. (run on Kaggle)
+# torch.cuda.set_device(device) if you trust the error WILL NEVER COME FROM the argument `device` (it means an error has already come from here.)
 
 def str2bool(v):
     return v.lower() in ("true")
@@ -104,10 +105,13 @@ if __name__ == "__main__":
                         choices=["train", "test"])
 
     # Directories.
-    parser.add_argument("--data_image_dir", type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/train")
+    # parser.add_argument("--data_image_dir", type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/train") # (run on GoogleColab)
+    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-Unified-cipher-generative-adversarial-network/data/train") # (run on Kaggle)
+
 
     parser.add_argument("--data_test_image_dir",
-                        type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/test")
+                        type=str, default="/kaggle/working/UC-GAN-Unified-cipher-generative-adversarial-network/data/test") # (run on Kaggle)
+                        #default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/test" if run on GoogleColab
     parser.add_argument('-f')
 
     config = parser.parse_args()
