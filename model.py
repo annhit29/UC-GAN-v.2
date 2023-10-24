@@ -7,8 +7,7 @@ import torch.nn.functional as F
 class Multiply(nn.Module):
     def __init__(self):
         super(Multiply, self).__init__()
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")# if torch.cpu.is_available() else "cuda")
         self.embed = nn.parameter.Parameter(
             torch.FloatTensor(256, 26), requires_grad=True)
         nn.init.kaiming_uniform_(
