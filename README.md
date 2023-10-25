@@ -1,6 +1,4 @@
-# UC-GAN
-
-Automated Classical Cipher Emulation Attacks via Unified Unsupervised Generative Adversarial Networks
+# UC-GAN-v.2 inspired by: Automated Classical Cipher Emulation Attacks via Unified Unsupervised Generative Adversarial Networks
 
 Torch implementation for learning a mapping between Plain text to Cipher Text
 
