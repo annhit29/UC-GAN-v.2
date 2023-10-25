@@ -464,7 +464,7 @@ class Solver(object):
                         continue
 
                     if len(id1) == 0 or len(id2) == 0 or len(id3) == 0:
-                        iden == 0
+                        iden == 0 #fixme: `=` instead of `==`
                         print("Fix batch again")
                         data_loader_test = self.data_loader_test
 
