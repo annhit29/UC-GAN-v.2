@@ -49,6 +49,7 @@ def row_encrypt(s,key):
         for j in range(len(arr)):
             cipher_text+=arr[j][h]
     print("The cipher text is: ",cipher_text)
+    return cipher_text
         
 msg=input("Enter the message: ")
 key=input("Enter the key in alphabets: ")
@@ -110,6 +111,7 @@ def row_decrypt(s,key):
         for j in i:
             plain_text+=j
     print("The plain text is: ",plain_text)
+    return plain_text
 
         
 msg=input("Enter the message to be decrypted: ")

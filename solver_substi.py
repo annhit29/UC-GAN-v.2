@@ -5,7 +5,9 @@ import torch.nn.functional as F
 import numpy as np
 import copy
 import os
-import torch.nn as nn
+
+#import substitution ciphers' modules:
+import lib.substitution as subst
 
 
 LETTERS = 'abcdefghijklmnopqrstuvwxyz'
@@ -16,27 +18,6 @@ def encrypt_subs(initial):
     output = ""
 
     key = 'qwertyuiopasdfghjklzxcvbnm'  # key for encrypt
-
-    shift = []
-
-    for j in range(len(key)):
-        x = ord(key[j]) - 97
-        shift.append(x)
-
-    cnt = 0
-    for char in initial:
-        if char in LETTERS:
-            output += LETTERS[shift[LETTERS.index(char)]]
-            cnt += 1
-
-    return output
-
-
-def decrypt(initial):
-    initial = initial.lower()
-    output = ""
-
-    key = 'kxvmcnophqrszyijadlegwbuft'  # inverse key for decrypt
 
     shift = []
 
@@ -106,7 +87,7 @@ class UnNormalize(object):
 
 
 class Solver(object):
-    """Solver for training and testing StarGAN."""
+    """Solver for training and testing UC-GAN."""
 
     def __init__(self, data_loader, data_loader_test, config):
         """Initialize configurations."""
@@ -494,7 +475,8 @@ class Solver(object):
             while e < len(id1):
                 list4 = ''  # for idx(Caeser)
                 list5 = ''  # for recovered PT from idx(Caeser)
-
+                
+                # Convert the one-hot encoded tensor to a string:
                 for q in range(100):
                     for w in range(26):
                         if (x_fixed_total_test[id1[e]][w][q].item() == 1.):
@@ -505,12 +487,13 @@ class Solver(object):
                 # Decrypt line
                 last = ''   # for recovered Caeser
 
+                # Caesar cipher decryption:
                 for q in range(len(list4)):
                     tmp = (ord(list4[q]) - 97 - 3) % 26
                     tmp = chr(tmp + 97)
                     last += tmp
 
-                cnt = 0
+                cnt = 0 #counter of how many characters in last differ from the corresponding characters in list5
                 for q in range(len(list4)):
                     if (last[q] != list5[q]):
                         cnt += 1
@@ -520,6 +503,7 @@ class Solver(object):
                 e += 1
             accu = accu / len(id1)
             accu_tmp.append(accu)
+            # Caeser decryption done
 
             e = 0
             accu2 = 0
@@ -536,7 +520,10 @@ class Solver(object):
 
                 # Decrypt line
                 last2 = ''   # for recovered Vigenere
-
+                '''
+                The first code differs in that it applies a specific shift for positions within the string based on `q % 4`. 
+                The second code, on the other hand, uses a key (the key parameter) to determine the shift for each character.
+                '''
                 for q in range(len(list6)):
                     if q % 4 == 0:
                         tmp2 = (ord(list6[q]) - 97 - 3) % 26
@@ -580,7 +567,7 @@ class Solver(object):
                             list9 += (chr(97+w))
 
                 # Decrypt line
-                last3 = decrypt(list8)    # for recovered subs
+                last3 = subst.decrypt(list8)    # for recovered subs
 
                 cnt = 0
                 for q in range(len(list8)):
@@ -651,6 +638,7 @@ class Solver(object):
                             tmp = (ord(list4[q]) - 97 + 3) % 26
                             tmp = chr(tmp + 97)
                             last += tmp
+                        #Caeser done
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -690,11 +678,11 @@ class Solver(object):
                         e += 1
 
                     else:  # Substitution
-                        lasts = encrypt_subs(list4)
+                        last = encrypt_subs(list4)
 
                         cnt = 0
                         for q in range(len(list5)):
-                            if (lasts[q] != list5[q]):
+                            if (last[q] != list5[q]):
                                 cnt += 1
                             else:
                                 continue
@@ -770,13 +758,13 @@ class Solver(object):
                     last = ''   # for recovered Caeser
                     tmp_arr = [0 for q in range(len(list4))]
 
-                    # decrypt to plain
+                    # decrypt to plainv using Caeser:
                     for q in range(len(list4)):
                         tmp = (ord(list4[q]) - 97 - 3) % 26
                         tmp = chr(tmp + 97)
-                        tmp_arr[q] = tmp
+                        tmp_arr[q] = tmp #: list[str]
 
-                    list4 = copy.deepcopy(tmp_arr)
+                    list4 = copy.deepcopy(tmp_arr) #: list[str]
 
                     if tt == 1 or tt == 0:  # Caeser or plain
                         e += 1
@@ -812,14 +800,14 @@ class Solver(object):
                         e += 1
 
                     else:  # Substitution
-                        tmp_list4 = ''
+                        compare_list4 = ''
                         for q in range(len(list4)):
-                            tmp_list4 += list4[q]
-                        lasts = encrypt_subs(tmp_list4)
+                            compare_list4 += list4[q]
+                        last = encrypt_subs(compare_list4)
 
                         cnt = 0
                         for q in range(len(list5)):
-                            if (lasts[q] != list5[q]):
+                            if (last[q] != list5[q]):
                                 cnt += 1
                             else:
                                 continue
@@ -903,9 +891,9 @@ class Solver(object):
                         else:
                             tmp = (ord(list4[q]) - 97 - 6) % 26
                             tmp = chr(tmp + 97)
-                            tmp_arr[q] = tmp
+                            tmp_arr[q] = tmp #: list[str]
 
-                    list4 = copy.deepcopy(tmp_arr)
+                    list4 = copy.deepcopy(tmp_arr) #: list[str]
 
                     if tt == 2 or tt == 0:  # Vigenere or plain
                         e += 1
@@ -928,14 +916,14 @@ class Solver(object):
                         e += 1
 
                     else:  # Substitution
-                        tmp_list4 = ''
+                        compare_list4 = ''
                         for q in range(len(list4)):
-                            tmp_list4 += list4[q]
-                        lasts = encrypt_subs(tmp_list4)
+                            compare_list4 += list4[q]
+                        last = encrypt_subs(compare_list4)
 
                         cnt = 0
                         for q in range(len(list5)):
-                            if (lasts[q] != list5[q]):
+                            if (last[q] != list5[q]):
                                 cnt += 1
                             else:
                                 continue
@@ -1001,7 +989,7 @@ class Solver(object):
                     last = ''   # for recovered Vigenere
 
                     # decrypt to plain
-                    list4 = decrypt(list4)
+                    list4 = subst.decrypt(list4)
 
                     if tt == 3 or tt == 0:  # substitution or plain
                         e += 1

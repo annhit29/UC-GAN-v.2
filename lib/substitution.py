@@ -1,7 +1,5 @@
 ### ref : https://github.com/CrypTools/CaesarCipher
 
-import random
-
 LETTERS = 'abcdefghijklmnopqrstuvwxyz'
 
 def encrypt(initial):
@@ -11,7 +9,7 @@ def encrypt(initial):
     initial = initial.lower()
     output = ""
 
-    key = 'qwertyuiopasdfghjklzxcvbnm'
+    key = 'qwertyuiopasdfghjklzxcvbnm' # key for encrypt
 
     shift = []
 
@@ -34,12 +32,12 @@ def decrypt(initial):
     initial = initial.lower()
     output = ""
 
-    key_inv = 'kxvmcnophqrszyijadlegwbuft'
+    key = 'kxvmcnophqrszyijadlegwbuft'  # inverse key for decrypt
 
     shift = []
 
-    for j in range(len(key_inv)):
-        x = ord(key_inv[j]) - 97
+    for j in range(len(key)):
+        x = ord(key[j]) - 97
         shift.append(x)
 
     cnt = 0

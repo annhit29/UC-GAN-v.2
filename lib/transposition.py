@@ -69,31 +69,31 @@ def decryptMessage(key, message):
     return ''.join(plaintext)
 
 
-# Test the Transpostion cipher
-if __name__ == "__main__":
-    # Crypting Test
-    print("Crypting Test : \n")
-    myMessage = '''Augusta Ada King-Noel, Countess of Lovelace (10 December 1815 - 27 November 1852) was an English mathematician and writer, chiefly known for her work on Charles Babbage's early mechanical general-purpose computer, the Analytical Engine. Her notes on the engine include what is recognised as the first algorithm intended to be carried out by a machine. As a result, she is often regarded as the first computer programmer.'''
-    myKey = 13
+# # Test the Transpostion cipher
+# if __name__ == "__main__":
+#     # Crypting Test
+#     print("Crypting Test : \n")
+#     myMessage = '''Augusta Ada King-Noel, Countess of Lovelace (10 December 1815 - 27 November 1852) was an English mathematician and writer, chiefly known for her work on Charles Babbage's early mechanical general-purpose computer, the Analytical Engine. Her notes on the engine include what is recognised as the first algorithm intended to be carried out by a machine. As a result, she is often regarded as the first computer programmer.'''
+#     myKey = 13
 
-    ciphertext = encryptMessage(myKey, myMessage)
+#     ciphertext = encryptMessage(myKey, myMessage)
 
-    # Print the encrypted string in ciphertext to the screen, with
-    # a | ("pipe" character) after it in case there are spaces at
-    # the end of the encrypted message.
-    print(ciphertext + '|')
-    print("\n")
+#     # Print the encrypted string in ciphertext to the screen, with
+#     # a | ("pipe" character) after it in case there are spaces at
+#     # the end of the encrypted message.
+#     print(ciphertext + '|')
+#     print("\n")
 
-    # DeCrypting Test
-    print("DeCrypting Test : \n")
-    myMessage = 'Cenoonommstmme oo snnio. s s c'
-    myKey = 8
+#     # DeCrypting Test
+#     print("DeCrypting Test : \n")
+#     myMessage = 'Cenoonommstmme oo snnio. s s c'
+#     myKey = 8
 
-    plaintext = decryptMessage(myKey, myMessage)
+#     plaintext = decryptMessage(myKey, myMessage)
 
-    # Print with a | ("pipe" character) after it in case
-    # there are spaces at the end of the decrypted message.
-    print(plaintext + '|')
+#     # Print with a | ("pipe" character) after it in case
+#     # there are spaces at the end of the decrypted message.
+#     print(plaintext + '|')
 
 
 # https://github.com/HolzerSoahita/Cracking_code_python/blob/main/Transposition/transposition_encrypt_decrypt.py

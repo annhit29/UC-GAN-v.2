@@ -11,7 +11,7 @@ def encrypt(initial, shift):
 
 	for char in initial:
 		if char in LETTERS:
-			output += LETTERS[(LETTERS.index(char) + shift) % len(LETTERS)]
+			output += LETTERS[(LETTERS.index(char) + shift) % 26]
 	return output
 
 def decrypt(initial, shift):
@@ -23,6 +23,6 @@ def decrypt(initial, shift):
 
 	for char in initial:
 		if char in LETTERS:
-			output += LETTERS[(LETTERS.index(char) - shift) % len(LETTERS)]
+			output += LETTERS[(LETTERS.index(char) - shift) % 26]
       
 	return output

@@ -13,7 +13,7 @@ def encrypt(initial, key):
 		if char in LETTERS:
 			shift = ord(key[cnt % len(key)]) - 97
 			#print(shift)
-			output += LETTERS[(LETTERS.index(char) + shift) % len(LETTERS)]
+			output += LETTERS[(LETTERS.index(char) + shift) % 26]
 			cnt += 1
 
 		'''
@@ -54,7 +54,7 @@ def decrypt(initial, key):
 		if char in LETTERS:
 			shift = ord(key[cnt % len(key)]) - 97
 			#print(shift, end=', ')
-			output += LETTERS[(LETTERS.index(char) - shift) % len(LETTERS)]
+			output += LETTERS[(LETTERS.index(char) - shift) % 26]
 			cnt += 1
 	
 	return output
