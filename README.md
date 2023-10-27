@@ -22,12 +22,17 @@ cd UC-GAN-Unified-cipher-generative-adversarial-network
 
 ### Lib
 
-The code to make cipher text.
+The code to make substitution cipher text.
 
 - caeser.py: Caeser
 - substitution.py: Substitution
 - vigenere.py: Vigenere
 - cipher.py: Encryption Test code
+
+The code to make transposition cipher text.
+Plaintexts can be rearranged into a ciphertext using a key, scrambling the order of characters like the shuffled pieces of a jigsaw puzzle. The resulting message is hard to decipher without the key because there are many ways the characters can be arranged. [wiki]
+
+
 
 ### data
 
