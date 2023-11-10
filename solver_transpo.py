@@ -68,7 +68,7 @@ class UnNormalize(object):
         return tensor
 
 
-class Solver(object):
+class Solver_Transpo(object):
     """Solver for training and testing UC-GAN-v.2"""
 
     def __init__(self, data_loader, data_loader_test, config):

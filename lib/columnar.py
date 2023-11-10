@@ -51,9 +51,9 @@ def row_encrypt(s,key):
     print("The cipher text is: ",cipher_text)
     return cipher_text
         
-msg=input("Enter the message: ")
-key=input("Enter the key in alphabets: ")
-row_encrypt(msg,key)
+# msg=input("Enter the message: ")
+# key=input("Enter the key in alphabets: ")
+# row_encrypt(msg,key)
 
 '''
 ----------OUTPUT----------
@@ -114,9 +114,9 @@ def row_decrypt(s,key):
     return plain_text
 
         
-msg=input("Enter the message to be decrypted: ")
-key=input("Enter the key in alphabets: ")
-row_decrypt(msg,key)
+# msg=input("Enter the message to be decrypted: ")
+# key=input("Enter the key in alphabets: ")
+# row_decrypt(msg,key)
 
 '''
 ----------OUTPUT----------

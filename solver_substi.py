@@ -86,7 +86,7 @@ class UnNormalize(object):
         return tensor
 
 
-class Solver(object):
+class Solver_Substi(object):
     """Solver for training and testing UC-GAN."""
 
     def __init__(self, data_loader, data_loader_test, config):
@@ -249,7 +249,7 @@ class Solver(object):
     def train(self):
         """Train model within a single dataset."""
         # Set data loader.
-        data_loader = self.data_loader
+        data_loader = self.data_loader # load data
 
         # Fetch fixed inputs for debugging.
         data_iter = iter(data_loader)

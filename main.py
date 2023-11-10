@@ -1,7 +1,7 @@
 from torch.backends import cudnn
 from data_loader import get_loader
-from solver_substi import Solver
-from solver_transpo import Solver
+from solver_substi import Solver_Substi
+from solver_transpo import Solver_Transpo
 import argparse
 import torch
 # import os
@@ -38,7 +38,8 @@ def main(config):
     )
 
     # Solver for training and testing.
-    solver = Solver(data_loader, data_loader_test, config)
+    # solver = Solver_Substi(data_loader, data_loader_test, config)
+    solver = Solver_Transpo(data_loader, data_loader_test, config)
 
     if config.mode == "train":
         solver.train()
