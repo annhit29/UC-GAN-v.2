@@ -702,9 +702,6 @@ class Solver(object):
 
                     # decrypt to plain using Rail-fence:
                     list4 = str(rf.decryptRailFence(list4, RAIL_FENCE_KEY))
-                    
-                    list4 = copy.deepcopy(Caeser(list4))
-
 
                     if tt == 1 or tt == 0:  # Rail-fence or Plaintext
                         e += 1
