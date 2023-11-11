@@ -1,4 +1,8 @@
 # %%writefile /kaggle/working/UC-GAN-v.2/lib/columnar.py
+'''
+How columnar cipher works: https://youtu.be/cPQXaYUMOjQ?si=ppOGGmu71SHYee8a
+'''
+
 import math
 
 def row_encrypt(s,key):
