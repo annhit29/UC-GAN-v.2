@@ -1,3 +1,4 @@
+# %%writefile /kaggle/working/UC-GAN-v.2/lib/solver_transpo.py
 from model import Generator
 from model import Discriminator
 import torch
@@ -13,7 +14,7 @@ import lib.transposition as transpo
 
 
 RAIL_FENCE_KEY = 4
-COLUMNAR_KEY = "hack" #order “3 1 2 4”
+COLUMNAR_KEY = "hackhack" #in anycase will = "hack" coz cf columnar.py  #order “3 1 2 4”
 TRANSPO_KEY = 8
 
 
