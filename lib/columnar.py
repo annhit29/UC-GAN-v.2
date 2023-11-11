@@ -36,7 +36,7 @@ def row_encrypt(s,key):
             j=0
             i+=1
     # print("The message matrix is: ")
-    
+
     # for i in arr:
     #     print("print i in arr:")
     #     print(i)
@@ -132,10 +132,11 @@ def row_decrypt(s,key):
 # msg=input("Enter the message to be decrypted: ")
 # key=input("Enter the key in alphabets: ")
 # row_decrypt(msg,key)
-key="hackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhack"
-print("real text', 'hack*25') =", 
-      row_decrypt("vxfzhajriewkgiuguxrkqxxndrirlrluijjjhvfriysjvkwgqxjjiswikmqjziqldvjyhvaofixoqjtywiwnrqjywlnylwtthskz", key))
-# =xvjlzmsrjdofveqjkhwrzgrgljxxruiqjlyrqiawxjwviihukidinfiiqjvrhijxokjjgfkyaxquvs
+
+# key="hackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhack"
+# print("real text', 'hack*25') =", 
+    #   row_decrypt("vxfzhajriewkgiuguxrkqxxndrirlrluijjjhvfriysjvkwgqxjjiswikmqjziqldvjyhvaofixoqjtywiwnrqjywlnylwtthskz", key))
+# output is "xvjlzmsrjdofveqjkhwrzgrgljxxruiqjlyrqiawxjwviihukidinfiiqjvrhijxokjjgfkyaxquvs"
 
 #input.len =100 but output.len = 16
 '''
