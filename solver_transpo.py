@@ -899,7 +899,7 @@ class Solver_Transpo(object):
                     last = ''   # for recovered Columnar
 
                     # decrypt to plain
-                    list4 = transpo.decryptMessage(list4, TRANSPO_KEY)
+                    list4 = transpo.decryptMessage(TRANSPO_KEY, list4)
 
                     if tt == 3 or tt == 0:  # transposition or plain
                         e += 1
