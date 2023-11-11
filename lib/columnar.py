@@ -11,7 +11,7 @@ def row_encrypt(s,key):
     # print("len(k)= ",len(k))
     for i in temp:
         k+=i
-    print("The key used for encryption is: ",k)
+    # print("The key used for encryption is: ",k)
     
     # ceil is used to adjust the count of
     # rows according to length of message
@@ -35,21 +35,24 @@ def row_encrypt(s,key):
         if(j>len(k)-1):
             j=0
             i+=1
-    print("The message matrix is: ")
-    for i in arr:
-        print(i)
+    # print("The message matrix is: ")
+    
+    # for i in arr:
+    #     print("print i in arr:")
+    #     print(i)
+    #     print('\n')
 
     cipher_text=""
     # To get indices as the key numbers instead of alphabets in the key, according
     # to algorithm, for appending the elementsof matrix formed earlier, column wise.
-    kk=sorted(k)
+    sorted_k=sorted(k)
     
-    for i in kk:
+    for i in sorted_k:
         # gives the column index
         h=k.index(i)
         for j in range(len(arr)):
             cipher_text+=arr[j][h]
-    print("The cipher text is: ",cipher_text)
+    # print("The cipher text is: ",cipher_text)
     return cipher_text
         
 # msg=input("Enter the message: ")
@@ -84,7 +87,7 @@ def row_decrypt(s,key):
     k=""
     for i in temp:
         k+=i
-    print("The key used for encryption is (w/o repeated letters): ",k)
+    # print("The key used for encryption is (w/o repeated letters): ",k)
     
     arr=[['' for i in range(len(k))] #=26
          for j in range(int(len(s)/len(k)))] #= 100/26 = 3
@@ -93,13 +96,13 @@ def row_decrypt(s,key):
 
     # To get indices as the key numbers instead of alphabets in the key, according
     # to algorithm, for appending the elementsof matrix formed earlier, column wise.
-    kk=sorted(k)
-    # print("kk=", kk)
+    sorted_k=sorted(k)
+    # print("sorted_k=", sorted_k)
     
     d=0
     # arranging the cipher message into matrix
     # to get the same matrix as in encryption
-    for i in kk:
+    for i in sorted_k:
         # print("i =", i)
         h=k.index(i) #k.len = 100
         # print("k.index(i)=", k.index(i))
@@ -111,25 +114,27 @@ def row_decrypt(s,key):
             d+=1
         # print('\n')
                 
-    print("The message matrix is: ")
-    for i in arr:
-        print(i)
+    # print("The message matrix is: ")
+    # for i in arr:
+    #     print("print i in arr:")
+    #     print(i)
+    #     print('\n')
 
     # the plain text
     plain_text=""
     for i in arr:
         for j in i:
             plain_text+=j
-    print("The plain text is: ",plain_text)
+    # print("The plain text is: ",plain_text)
     return plain_text
 
         
 # msg=input("Enter the message to be decrypted: ")
 # key=input("Enter the key in alphabets: ")
 # row_decrypt(msg,key)
-# key="hackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhack"
-# print("real text', 'hack*25') =", 
-    #   row_decrypt("vxfzhajriewkgiuguxrkqxxndrirlrluijjjhvfriysjvkwgqxjjiswikmqjziqldvjyhvaofixoqjtywiwnrqjywlnylwtthskz", key))
+key="hackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhack"
+print("real text', 'hack*25') =", 
+      row_decrypt("vxfzhajriewkgiuguxrkqxxndrirlrluijjjhvfriysjvkwgqxjjiswikmqjziqldvjyhvaofixoqjtywiwnrqjywlnylwtthskz", key))
 # =xvjlzmsrjdofveqjkhwrzgrgljxxruiqjlyrqiawxjwviihukidinfiiqjvrhijxokjjgfkyaxquvs
 
 #input.len =100 but output.len = 16
