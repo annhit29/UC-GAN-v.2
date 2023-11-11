@@ -506,6 +506,8 @@ class Solver_Transpo(object):
                 cnt = 0
                 for q in range(len(list6)):
                     if (last2[q] != list7[q]):
+                        #pk 16 au lieu de 100? fixed: coz the original code had `for j in range(len(k)):` instead of `for j in range(len(arr)):` that caused `IndexError: list index out of range` in `arr[j][h]`
+                        # Dou vient la data? from the provided src. 
                         cnt += 1
                     else:
                         continue

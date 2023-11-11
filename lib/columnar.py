@@ -1,13 +1,14 @@
+# %%writefile /kaggle/working/UC-GAN-v.2/lib/columnar.py
 import math
 
 def row_encrypt(s,key):
-    
-    # to remove repeated alphabets in key
+    # to remove repeated alphabets in key:
     temp=[]
     for i in key:
         if i not in temp:
             temp.append(i)
     k=""
+    # print("len(k)= ",len(k))
     for i in temp:
         k+=i
     print("The key used for encryption is: ",k)
@@ -74,32 +75,41 @@ The cipher text is:  Mu b___mid____crnm___ ew ___o ee___ps ____ytoy___
 
 
 def row_decrypt(s,key):
-
-    # to remove repeated alphabets in key
+    # to remove repeated alphabets in key:
     temp=[]
-    for i in key:
-        if i not in temp:
+    for i in key: 
+        if i not in temp: #no repeated letter is in the new key k
             temp.append(i)
+    # = "hack"
     k=""
     for i in temp:
         k+=i
-    print("The key used for encryption is: ",k)
+    print("The key used for encryption is (w/o repeated letters): ",k)
     
-    arr=[['' for i in range(len(k))]
-         for j in range(int(len(s)/len(k)))]
+    arr=[['' for i in range(len(k))] #=26
+         for j in range(int(len(s)/len(k)))] #= 100/26 = 3
+    # print("arr # of rows=", len(arr))
+    # print("arr=", arr) # 26 * 3
 
     # To get indices as the key numbers instead of alphabets in the key, according
     # to algorithm, for appending the elementsof matrix formed earlier, column wise.
     kk=sorted(k)
+    # print("kk=", kk)
     
     d=0
     # arranging the cipher message into matrix
     # to get the same matrix as in encryption
     for i in kk:
-        h=k.index(i)
-        for j in range(len(k)):
+        # print("i =", i)
+        h=k.index(i) #k.len = 100
+        # print("k.index(i)=", k.index(i))
+        for j in range(len(arr)): #= 100
+            # print("d =", d)
+            # print("s[d]=", s[d])
             arr[j][h]=s[d]
+            # print("arr[j][h]=", arr[j][h]) #this line outofrange
             d+=1
+        # print('\n')
                 
     print("The message matrix is: ")
     for i in arr:
@@ -117,7 +127,12 @@ def row_decrypt(s,key):
 # msg=input("Enter the message to be decrypted: ")
 # key=input("Enter the key in alphabets: ")
 # row_decrypt(msg,key)
+# key="hackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhackhack"
+# print("real text', 'hack*25') =", 
+    #   row_decrypt("vxfzhajriewkgiuguxrkqxxndrirlrluijjjhvfriysjvkwgqxjjiswikmqjziqldvjyhvaofixoqjtywiwnrqjywlnylwtthskz", key))
+# =xvjlzmsrjdofveqjkhwrzgrgljxxruiqjlyrqiawxjwviihukidinfiiqjvrhijxokjjgfkyaxquvs
 
+#input.len =100 but output.len = 16
 '''
 ----------OUTPUT----------
 Enter the message to be decrypted: Mu b___mid____crnm___ ew ___o ee___ps ____ytoy___
@@ -134,6 +149,6 @@ The message matrix is:
 The plain text is:  My computer is owned by me_______________________
 >>>
 '''
-
+# print(row_decrypt("Mu b___mid____crnm___ ew ___o ee___ps ____ytoy___", "expensive"))
 
 # https://github.com/Abhiramborige/Crypto-systems/blob/master/columnar_transposition_decryption.py
