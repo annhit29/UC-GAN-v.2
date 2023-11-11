@@ -1,9 +1,15 @@
+# %%writefile /kaggle/working/UC-GAN-v.2/main.py
+
 from torch.backends import cudnn
 from data_loader import get_loader
 from solver_substi import Solver_Substi
 from solver_transpo import Solver_Transpo
 import argparse
 import torch
+# from pyenigma import enigma, rotor #https://github.com/cedricbonhomme/pyEnigma/tree/master
+
+# from utils import normalize_fn, append_bias_term, accuracy_fn, macrof1_fn, get_n_classes
+
 # import os
 # os.environ["CUDA_VISIBLE_DEVICES"] = "" <- this wasn't the bug
 
@@ -22,6 +28,28 @@ def str2bool(v):
 def main(config):
     # For fast training.
     cudnn.benchmark = True
+    
+    # #  create an Enigma machine with desired rotor and reflector configurations:
+    # engine = enigma.Enigma(rotor.ROTOR_Reflector_A, rotor.ROTOR_I,
+    #                        rotor.ROTOR_II, rotor.ROTOR_III, key="AAA",
+    #                        plugs="AV BS CG DL FU HZ IN KM OW RX")
+    
+    # # use the `engine` to encrypt the message "Hello World.":
+    # secret = engine.encipher("Hello World") #= "Qgqop Vyzxp"
+
+    # '''
+    # Enigma encryption is symmetric, which means that the same settings is used to both encrypt or decrypt a message.
+    # In a real Enigma machine, after each letter is encrypted, the rotors move, changing the internal state, coz the rotor advances its state in one-direction.
+    # When you try to encrypt the already encrypted message, you're starting from a different rotor state, which leads to incorrect decryption.
+    # To decrypt the message, you need to reset the rotor states to their initial positions, s.t. the Enigma is the same Enigma machine configuration, before calling the encipher method again.
+    # If you're not resetting the machine state, encrypting the result of the first encryption will produce a different result than encrypting "Hello World" directly.
+    # '''
+    # # Reset the Enigma machine state after each encryption to decrypt the message:
+    # engine = enigma.Enigma(rotor.ROTOR_Reflector_A, rotor.ROTOR_I,
+    #                        rotor.ROTOR_II, rotor.ROTOR_III, key="AAA",
+    #                        plugs="AV BS CG DL FU HZ IN KM OW RX")
+    # print(engine.encipher(secret)) #decryption, = "Hello World"
+
 
     data_loader = get_loader(
         config.data_image_dir,
@@ -37,14 +65,24 @@ def main(config):
         config.num_workers,
     )
 
-    # Solver for training and testing.
-    # solver = Solver_Substi(data_loader, data_loader_test, config)
-    solver = Solver_Transpo(data_loader, data_loader_test, config)
+    # Solver for training and testing: #todo: uncomment the solver_cipher you wanna test:
+    solver = Solver_Substi(data_loader, data_loader_test, config)
+    # solver = Solver_Transpo(data_loader, data_loader_test, config)
+    # solver = Solver_Enigma(data_loader, data_loader_test, config)
+    # solver = Solver_Rotor(data_loader, data_loader_test, config)
+
 
     if config.mode == "train":
-        solver.train()
-    elif config.mode == "test":
-        solver.test()
+        preds_train = solver.train()
+    # elif config.mode == "test":
+        # solver.test()
+    
+
+    ## Report results: performance on train and valid/test sets
+    # acc = accuracy_fn(preds_train, ytrain)
+    # macrof1 = macrof1_fn(preds_train, ytrain)
+    # print(f"\nTrain set: accuracy = {acc:.3f}% - F1-score = {macrof1:.6f}")
+
 
 
 if __name__ == "__main__":

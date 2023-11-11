@@ -1,3 +1,4 @@
+# %%writefile /kaggle/working/UC-GAN-v.2/lib/solver_substi.py
 from model import Generator
 from model import Discriminator
 import torch
@@ -98,8 +99,7 @@ class Solver_Substi(object):
 
         # Model configurations.
         self.c_dim = config.c_dim #=4
-        # print("c_dim from solver.py = ", self.c_dim)
-        self.g_conv_dim = config.g_conv_dim #=32 
+        self.g_conv_dim = config.g_conv_dim
         self.d_conv_dim = config.d_conv_dim
         self.lambda_cls = config.lambda_cls
         self.lambda_rec = config.lambda_rec
@@ -108,6 +108,7 @@ class Solver_Substi(object):
         # Training configurations.
         self.batch_size = config.batch_size
         self.num_iters = config.num_iters
+        print("self.num_iters =", self.num_iters)
         self.g_lr = config.g_lr
         self.d_lr = config.d_lr
         self.beta1 = config.beta1
@@ -278,6 +279,7 @@ class Solver_Substi(object):
         print("Start training...")
         # start_time = time.time()
         for i in range(start_iters, self.num_iters, 10000):
+            print("Do you enter?")
 
             '''warmup_constant in lr_schemes.py'''
 
@@ -466,6 +468,7 @@ class Solver_Substi(object):
             ###########################################################################
             ############################# cipher to plain #############################
             ###########################################################################
+            print("CT to PT START:")
             x_fixed_fake_test = self.G(
                 x_fixed_total_test, c_fixed_list_test[0])
             x_fixed_fake_test = self.myonehot(x_fixed_fake_test)
@@ -481,6 +484,7 @@ class Solver_Substi(object):
                     for w in range(26):
                         if (x_fixed_total_test[id1[e]][w][q].item() == 1.):
                             list4 += (chr(97+w))
+                            print("list4 =", list4)
                         if (x_fixed_fake_test[id1[e]][w][q].item() == 1.):
                             list5 += (chr(97+w))
 
@@ -492,6 +496,7 @@ class Solver_Substi(object):
                     tmp = (ord(list4[q]) - 97 - 3) % 26
                     tmp = chr(tmp + 97)
                     last += tmp
+                    print("list4 decrypted= ", last)
 
                 cnt = 0 #counter of how many characters in last differ from the corresponding characters in list5
                 for q in range(len(list4)):
