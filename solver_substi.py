@@ -90,12 +90,12 @@ class UnNormalize(object):
 class Solver_Substi(object):
     """Solver for training and testing UC-GAN."""
 
-    def __init__(self, data_loader, data_loader_test, config):
+    def __init__(self, data_loader_substi, data_loader__substi_test, config):
         """Initialize configurations."""
 
         # Data loader.
-        self.data_loader = data_loader
-        self.data_loader_test = data_loader_test
+        self.data_loader = data_loader_substi
+        self.data_loader_test = data_loader__substi_test
 
         # Model configurations.
         self.c_dim = config.c_dim #=4
@@ -476,17 +476,18 @@ class Solver_Substi(object):
             e = 0
             accu = 0
             while e < len(id1):
-                list4 = ''  # for idx(Caeser)
-                list5 = ''  # for recovered PT from idx(Caeser)
+                list4 = ''  # for idx(Caeser CT)
+                list5 = ''  # for recovered PT from idx(Caeser CT)
                 
                 # Convert the one-hot encoded tensor to a string:
                 for q in range(100):
                     for w in range(26):
                         if (x_fixed_total_test[id1[e]][w][q].item() == 1.):
                             list4 += (chr(97+w))
-                            print("list4 =", list4)
+                        print("list4 =", list4)
                         if (x_fixed_fake_test[id1[e]][w][q].item() == 1.):
                             list5 += (chr(97+w))
+                        print("list5 =", list5)
 
                 # Decrypt line
                 last = ''   # for recovered Caeser
@@ -496,7 +497,7 @@ class Solver_Substi(object):
                     tmp = (ord(list4[q]) - 97 - 3) % 26
                     tmp = chr(tmp + 97)
                     last += tmp
-                    print("list4 decrypted= ", last)
+                    print("list4 real CT decrypted= ", last)
 
                 cnt = 0 #counter of how many characters in last differ from the corresponding characters in list5
                 for q in range(len(list4)):
