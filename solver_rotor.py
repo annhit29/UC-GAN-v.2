@@ -1,4 +1,3 @@
-# %%writefile /kaggle/working/UC-GAN-v.2/lib/solver_substi.py
 from model import Generator
 from model import Discriminator
 import torch
@@ -7,95 +6,84 @@ import numpy as np
 import copy
 import os
 
-#import substitution ciphers' modules:
-import lib.substitution as subst
+# import lib.lorenz_machine.lorenz.machines as lorenz_cipher
+from lib.lorenz_machine.lorenz.machines import SZ40
+# import lib.lorenz_machine.lorenz.patterns as lorenz_patterns
+from lib.lorenz_machine.lorenz.patterns import KH_CAMS
+# import telegrahy utility library
+from lib.lorenz_machine.lorenz.telegraphy import Teleprinter
+
+from pyenigma import enigma, rotor
+
 
 CHARACTERS_NBRS = 100 #type int
-LETTERS = 'abcdefghijklmnopqrstuvwxyz'
+
+# ----Lorenz machine related functions----
+
+# Encrypt line using Lorenz cipher w/ the model SZ40-KH_CAMS:
+def lorenz_encrypt(strPT):
+    #1. transform the input PT from str to list format
+    listPT = Teleprinter.encode(strPT)
+    #2. 
+    # use the `KH` pattern to encrypt the message.
+    machine = SZ40(KH_CAMS)
+    #3. encrypt the PT list format to CT list format
+    listCT = machine.feed(listPT) # list CT
+    #4. transform the CT list format to str format
+    strCT = Teleprinter.decode(listCT) #str CT
+    #Encryption done
+    return str(strCT)
+
+# Decrypt line using Lorenz cipher w/ the model SZ40-KH_CAMS:
+def lorenz_decrypt(strCT):
+    #1. transform the input CT from str to list format
+    listCT = Teleprinter.encode(strCT)
+    #2. reset the machine:
+    # use the `KH` pattern to encrypt the message.
+    machine = SZ40(KH_CAMS)
+    #3. encrypt the CT list format to PT list format
+    listPT = machine.feed(listCT)
+    #4. transform the PT list format to str format
+    strPT = Teleprinter.decode(listPT)
+    #Decryption done
+    return str(strPT)
+    
+
+# ----Enigma machine related functions----
+
+# Create an Enigma machine with desired rotor and reflector configurations:
+#`engine` is a global variable for Enigma
+engine = enigma.Enigma(
+    rotor.ROTOR_Reflector_A, rotor.ROTOR_I, rotor.ROTOR_II, rotor.ROTOR_III,
+    key="ABC", plugs="AV BS CG DL FU HZ IN KM OW RX"
+)
+
+def reset_enigma_machine():
+    """
+    Reset the state of the Enigma machine by reinitializing with the default configuration.
+    """
+    return enigma.Enigma(
+        rotor.ROTOR_Reflector_A, rotor.ROTOR_I, rotor.ROTOR_II, rotor.ROTOR_III,
+        key="ABC", plugs="AV BS CG DL FU HZ IN KM OW RX"
+    )
+
+def enigma_encrypt_or_decrypt(inputCT):
+    reset_enigma_machine() #must always reset the machine before each msg encryption/decryption
+    outputPT = engine.encipher(inputCT) # the encryption function and the decryption function are the same   
+    return outputPT
 
 
-def encrypt_subs(initial):
-    initial = initial.lower()
-    output = ""
 
-    key = 'qwertyuiopasdfghjklzxcvbnm'  # key for encrypt
-
-    shift = []
-
-    for j in range(len(key)):
-        x = ord(key[j]) - 97
-        shift.append(x)
-
-    cnt = 0
-    for char in initial:
-        if char in LETTERS:
-            output += LETTERS[shift[LETTERS.index(char)]]
-            cnt += 1
-
-    return output
-
-
-
-def getkeymatrix(key, key_len):
-    key_mat = [[0]*key_len for i in range(key_len)]
-
-    key = key.lower()
-
-    for i in range(key_len):
-        for j in range(key_len):
-            key_mat[i][j] = ord(key[key_len*i+j]) - 97
-
-    inv = get_inv(key_mat)
-
-    return key_mat
-
-
-def get_inv(key_mat):
-
-    a = key_mat[0][0]
-    d = key_mat[1][1]
-    b = key_mat[0][1]
-    c = key_mat[1][0]
-
-    tmp = a*d - b*c
-
-    ret = 0
-
-    if (gcd(tmp, 26) != 1):
-        print("plz fix keys")
-    else:
-        for i in range(26):
-            if ((tmp * i) % 26 == 1):
-                ret = i
-
-    return ret
-
-
-def gcd(a, b):
-    return b if a == 0 else gcd(b % a, a)
-
-
-class UnNormalize(object):
-    def __init__(self, mean, std):
-        self.mean = mean
-        self.std = std
-
-    def __call__(self, tensor):
-        for t, m, s in zip(tensor, self.mean, self.std):
-            t.mul_(s).add_(m)
-            # the normalize code -> t.sub_(m).div_(s)
-        return tensor
-
-
-class Solver_Substi(object):
+"""Rotor machine class"""
+class Solver_Rotor(object):
     """Solver for training and testing UC-GAN."""
 
-    def __init__(self, data_loader_substi, data_loader__substi_test, config):
+    def __init__(self, data_loader, data_loader_test, config):
         """Initialize configurations."""
 
         # Data loader.
-        self.data_loader = data_loader_substi
-        self.data_loader_test = data_loader__substi_test
+        self.data_loader = data_loader
+        self.data_loader_test = data_loader_test
 
         # Model configurations.
         self.c_dim = config.c_dim #=4
@@ -108,7 +96,6 @@ class Solver_Substi(object):
         # Training configurations.
         self.batch_size = config.batch_size
         self.num_iters = config.num_iters
-        print("self.num_iters =", self.num_iters)
         self.g_lr = config.g_lr
         self.d_lr = config.d_lr
         self.beta1 = config.beta1
@@ -173,10 +160,8 @@ class Solver_Substi(object):
 
     def classification_loss(self, logit, target):
         """Compute binary or softmax cross entropy loss."""
-        # print("logit=", logit)
-        # print("target = ", target)
-        return F.cross_entropy(logit, target) #`torch.nn.functional.cross_entropy(input, target)` can receive a multi-class `target` (classes 0, 1, 2 and 3)
-
+        return F.cross_entropy(logit, target)
+    
     def StoE2(self, x):
         """from Simplex to Embedding"""
         x_total = torch.reshape(x, (x.size(0), 26, CHARACTERS_NBRS))
@@ -258,14 +243,14 @@ class Solver_Substi(object):
         # Start training from scratch or resume training.
         start_iters = 0
 
-        accu_tmp = []   # for Caeser
-        accu_tmp2 = []  # for Vig
-        accu_tmp3 = []  # for Hill
+        accu_tmp = []   # for Lorenz
+        accu_tmp2 = []  # for Enigma
+        accu_tmp3 = []  # for TypeX
 
         # accu test from PT to CT
-        accu_tmp01 = []  # Caeser
-        accu_tmp02 = []  # Vig
-        accu_tmp03 = []  # Subs
+        accu_tmp01 = []  # Lorenz
+        accu_tmp02 = []  # Enigma
+        accu_tmp03 = []  # TypeX
 
         # accu test for each cipher emulation
         accu_CtoV = []
@@ -334,14 +319,12 @@ class Solver_Substi(object):
             d_loss_real = torch.mean((out_src-1)**2)
             d_loss_cls = self.classification_loss(out_cls, label_org)
 
-            # print("still OK")
             # x_groundtruth = x_groundtruth.to(self.device) # why convert to cuda if already cuda?
-            # print("x_groundtruth.to = ", x_groundtruth)
             x_real_tmp = x_real_tmp.to(self.device)
 
             # Compute loss with fake images.
             # print("tout va bien mais pas ap l'appel de G -> cf class Generator & Discriminator: `c_dim doit être = 4`!")
-            x_fake = self.G(x_groundtruth, c_trg) #error comes from label index outofrange,so c_trg
+            x_fake = self.G(x_groundtruth, c_trg)
             x_fake = self.StoE2(x_fake)
 
             out_src, out_cls = self.D(x_fake.detach())
@@ -378,7 +361,6 @@ class Solver_Substi(object):
 
             loss_d = d_loss.item()
 
-            # print(i)
 
             # =================================================================================== #
             #                               3. Train the generator                                #
@@ -474,8 +456,8 @@ class Solver_Substi(object):
             e = 0
             accu = 0
             while e < len(id1):
-                list4 = ''  # for idx(Caeser CT)
-                list5 = ''  # for recovered PT from idx(Caeser CT)
+                list4 = ''  # for idx(Lorenz CT)
+                list5 = ''  # for recovered PT from idx(Lorenz CT)
                 
                 # Convert the one-hot encoded tensor to a string:
                 for q in range(CHARACTERS_NBRS):
@@ -485,15 +467,7 @@ class Solver_Substi(object):
                         if (x_fixed_fake_test[id1[e]][w][q].item() == 1.):
                             list5 += (chr(97+w))
 
-                # Decrypt line
-                last = ''   # for recovered Caeser
-
-                # Caesar cipher decryption:
-                for q in range(len(list4)):
-                    tmp = (ord(list4[q]) - 97 - 3) % 26
-                    tmp = chr(tmp + 97)
-                    last += tmp
-                    print("list4 real CT decrypted= ", last)
+                last = lorenz_decrypt(list4)  # for recovered Lorenz CT
 
                 cnt = 0 #counter of how many characters in last differ from the corresponding characters in list5
                 for q in range(len(list4)):
@@ -505,13 +479,13 @@ class Solver_Substi(object):
                 e += 1
             accu = accu / len(id1)
             accu_tmp.append(accu)
-            # Caeser decryption done
+            # Lorenz decryption done
 
             e = 0
             accu2 = 0
             while e < len(id2):
-                list6 = ''  # for idx2(Vigenere)
-                list7 = ''  # for recovered PT from idx2(Vigenere)
+                list6 = ''  # for idx2(Enigma CT)
+                list7 = ''  # for recovered PT from idx2(Enigma CT)
 
                 for q in range(CHARACTERS_NBRS):
                     for w in range(26):
@@ -521,28 +495,7 @@ class Solver_Substi(object):
                             list7 += (chr(97+w))
 
                 # Decrypt line
-                last2 = ''   # for recovered Vigenere
-                '''
-                The first code differs in that it applies a specific shift for positions within the string based on `q % 4`. 
-                The second code, on the other hand, uses a key (the key parameter) to determine the shift for each character.
-                '''
-                for q in range(len(list6)):
-                    if q % 4 == 0:
-                        tmp2 = (ord(list6[q]) - 97 - 3) % 26
-                        tmp2 = chr(tmp2 + 97)
-                        last2 += tmp2
-                    elif q % 4 == 1:
-                        tmp2 = (ord(list6[q]) - 97 - 4) % 26
-                        tmp2 = chr(tmp2 + 97)
-                        last2 += tmp2
-                    elif q % 4 == 2:
-                        tmp2 = (ord(list6[q]) - 97 - 5) % 26
-                        tmp2 = chr(tmp2 + 97)
-                        last2 += tmp2
-                    else:
-                        tmp2 = (ord(list6[q]) - 97 - 6) % 26
-                        tmp2 = chr(tmp2 + 97)
-                        last2 += tmp2
+                last2 = enigma_encrypt_or_decrypt(list6) # for recovered Enigma
 
                 cnt = 0
                 for q in range(len(list6)):
@@ -558,7 +511,7 @@ class Solver_Substi(object):
             e = 0
             accu3 = 0
             while e < len(id3):
-                list8 = ''  # for Substitution
+                list8 = ''  # for TypeX
                 list9 = ''  # for recovered PT from list8
 
                 for q in range(CHARACTERS_NBRS):
@@ -569,7 +522,8 @@ class Solver_Substi(object):
                             list9 += (chr(97+w))
 
                 # Decrypt line
-                last3 = subst.decrypt(list8)    # for recovered subs
+                #todo: for typex: understand how to enc.&dec.
+                last3 = subst.decrypt(list8)    # for recovered TypeX
 
                 cnt = 0
                 for q in range(len(list8)):
@@ -582,15 +536,15 @@ class Solver_Substi(object):
             accu3 = accu3 / len(id3)
             accu_tmp3.append(accu3)
 
-            print("Ceaser to plain : ", accu)
-            print("Vigenere to plain : ", accu2)
-            print("Subs to plain : ", accu3)
+            print("Lorenz to plain : ", accu)
+            print("Enigma to plain : ", accu2)
+            print("TypeX to plain : ", accu3)
 
             ###########################################################################
             ############################# plain to cipher #############################
             ###########################################################################
 
-            # Target domain is (tt+1) (1 : Caeser, 2 : Vigenere, 3 : Subs)
+            # Target domain is (tt+1) (1 : Lorenz, 2 : Enigma, 3 : TypeX)
             for tt in range(3):
                 x_fixed_fake_test = self.G(
                     x_fixed_total_test, c_fixed_list_test[tt+1])
@@ -615,12 +569,11 @@ class Solver_Substi(object):
                     else:
                         iden = 1
 
-                # print(len(ids))
 
                 e = 0
-                accu1 = 0  # -> Caeser
-                accu2 = 0  # -> Vigenere
-                accu3 = 0  # -> Substitution
+                accu1 = 0  # -> Lorenz
+                accu2 = 0  # -> Enigma
+                accu3 = 0  # -> TypeX
                 while e < len(id0):
                     list4 = ''  # for plain
                     list5 = ''  # for target domain tt+1
@@ -633,14 +586,11 @@ class Solver_Substi(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Caeser
+                    last = ''   # for recovered Lorenz
 
-                    if (tt+1) == 1:  # Caeser
-                        for q in range(len(list4)):
-                            tmp = (ord(list4[q]) - 97 + 3) % 26
-                            tmp = chr(tmp + 97)
-                            last += tmp
-                        #Caeser done
+                    if (tt+1) == 1:  # Lorenz
+                        last = lorenz_encrypt(list4)
+                        #Lorenz done
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -651,24 +601,9 @@ class Solver_Substi(object):
                         accu1 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    elif (tt+1) == 2:  # Vigenere
-                        for q in range(len(list4)):
-                            if q % 4 == 0:
-                                tmp = (ord(list4[q]) - 97 + 3) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 1:
-                                tmp = (ord(list4[q]) - 97 + 4) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 2:
-                                tmp = (ord(list4[q]) - 97 + 5) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            else:
-                                tmp = (ord(list4[q]) - 97 + 6) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
+                    elif (tt+1) == 2:  # Enigma
+                        last = enigma_encrypt_or_decrypt(list4)
+                        # Enigma done
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -679,8 +614,9 @@ class Solver_Substi(object):
                         accu2 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    else:  # Substitution
+                    else:  # TypeX #todo enc.
                         last = encrypt_subs(list4)
+                        # TypeX done
 
                         cnt = 0
                         for q in range(len(list5)):
@@ -695,15 +631,15 @@ class Solver_Substi(object):
                 if (tt+1) == 1:
                     accu1 = accu1 / len(id0)
                     accu_tmp01.append(accu1)
-                    print("plain to Caeser : ", accu1)
+                    print("plain to Lorenz : ", accu1)
                 elif (tt+1) == 2:
                     accu2 = accu2 / len(id0)
                     accu_tmp02.append(accu2)
-                    print("plain to Vigenere : ", accu2)
+                    print("plain to Enigma : ", accu2)
                 else:
                     accu3 = accu3 / len(id0)
                     accu_tmp03.append(accu3)
-                    print("plain to Substitution : ", accu3)
+                    print("plain to Lorenz : ", accu3)
 
 
             ########################################################################
@@ -711,7 +647,7 @@ class Solver_Substi(object):
             ########################################################################
 
             # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            # Target domain is (0 : plain, 2 : Vigenere, 3 : Subs)
+            # Target domain is (0 : plain, 2 : Enigma, 3 : TypeX)
             for tt in range(4):
                 if tt == 1:
                     continue
@@ -739,7 +675,6 @@ class Solver_Substi(object):
                     else:
                         iden = 1
 
-                # print(len(ids))
 
                 e = 0
                 accu1 = 0  # -> 0
@@ -757,40 +692,19 @@ class Solver_Substi(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Caeser
-                    tmp_arr = [0 for q in range(len(list4))]
+                    last = ''   # for recovered Lorenz
 
-                    # decrypt (<- coz 0 2 3, no 1) to PT using Caeser:
-                    for q in range(len(list4)):
-                        tmp = (ord(list4[q]) - 97 - 3) % 26
-                        tmp = chr(tmp + 97)
-                        tmp_arr[q] = tmp #: list[str]
+                    #decrypt to PT using Lorenz
+                    list4 = lorenz_decrypt(list4)
 
-                    list4 = copy.deepcopy(tmp_arr) #: list[str]
-
-                    if tt == 1 or tt == 0:  # Caeser or plain
+                    if tt == 1 or tt == 0:  # Lorenz or plain
                         e += 1
                         continue
 
-                    elif (tt) == 2:  # Vigenere
-                        # encrypt to Vigenere
-                        for q in range(len(list4)):
-                            if q % 4 == 0:
-                                tmp = (ord(list4[q]) - 97 + 3) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 1:
-                                tmp = (ord(list4[q]) - 97 + 4) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 2:
-                                tmp = (ord(list4[q]) - 97 + 5) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            else:
-                                tmp = (ord(list4[q]) - 97 + 6) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
+                    elif (tt) == 2:  # Enigma
+                        # encrypt to Enigma
+                        last = enigma_encrypt_or_decrypt(list4)
+                        #Enigma done
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -801,11 +715,13 @@ class Solver_Substi(object):
                         accu2 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    else:  # Substitution
+                    else:  # TypeX 
                         compare_list4 = ''
                         for q in range(len(list4)):
                             compare_list4 += list4[q]
+                        #todo: for the following line: encrypt using TypeX
                         last = encrypt_subs(compare_list4)
+                        # TypeX done
 
                         cnt = 0
                         for q in range(len(list5)):
@@ -815,19 +731,20 @@ class Solver_Substi(object):
                                 continue
                         accu3 += float((len(list4) - cnt) / len(list4))
                         e += 1
+
                 if tt == 1 or tt == 0:
                     continue
                 elif tt == 2:
                     accu2 = accu2 / len(id1)
                     accu_CtoV.append(accu2)
-                    print("Caeser to Vigenere : ", accu2)
+                    print("Lorenz to Enigma : ", accu2)
                 else:
                     accu3 = accu3 / len(id1)
                     accu_CtoS.append(accu3)
-                    print("Caeser to Substitution : ", accu3)
+                    print("Lorenz to TypeX : ", accu3)
 
             # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            # Target domain is (0 : plain, 1 : Caeser, 3 : Subs)
+            # Target domain is (0 : plain, 1 : Lorenz, 3 : TypeX)
             for tt in range(4):
                 if tt == 2:
                     continue
@@ -855,7 +772,6 @@ class Solver_Substi(object):
                     else:
                         iden = 1
 
-                # print(len(ids))
 
                 e = 0
                 accu1 = 0  # -> 0
@@ -873,42 +789,19 @@ class Solver_Substi(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Vigenere
-                    tmp_arr = [0 for q in range(len(list4))]
+                    last = ''   # for recovered Enigma
 
-                    # decrypt (coz 0 1 3, but no 2) Vigenere CT to plain
-                    for q in range(len(list4)):
-                        if q % 4 == 0:
-                            tmp = (ord(list4[q]) - 97 - 3) % 26
-                            tmp = chr(tmp + 97)
-                            tmp_arr[q] = tmp
-                        elif q % 4 == 1:
-                            tmp = (ord(list4[q]) - 97 - 4) % 26
-                            tmp = chr(tmp + 97)
-                            tmp_arr[q] = tmp
-                        elif q % 4 == 2:
-                            tmp = (ord(list4[q]) - 97 - 5) % 26
-                            tmp = chr(tmp + 97)
-                            tmp_arr[q] = tmp
-                        else:
-                            tmp = (ord(list4[q]) - 97 - 6) % 26
-                            tmp = chr(tmp + 97)
-                            tmp_arr[q] = tmp #: list[str]
-                        # the output of decrypted Vigenere CT is stored in tmp_arr
+                    # decrypt Enigma CT to plain
+                    list4 = enigma_encrypt_or_decrypt(list4)
 
-                    list4 = copy.deepcopy(tmp_arr) #: list[str]
-                    # list4 now holds the decrypted Vigenere text, replacing its previous content (<-the encrypted text).
-
-                    if tt == 2 or tt == 0:  # Vigenere or plain
+                    if tt == 2 or tt == 0:  # Enigma or plain
                         e += 1
                         continue
 
-                    elif (tt) == 1:  # Caeser
-                        # encrypt to Caeser
-                        for q in range(len(list4)):
-                            tmp = (ord(list4[q]) - 97 + 3) % 26
-                            tmp = chr(tmp + 97)
-                            last += tmp
+                    elif (tt) == 1:  # Lorenz
+                        # encrypt to Lorenz
+                        last = lorenz_encrypt(list4)
+                        # encrypt to Lorenz done
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -919,11 +812,14 @@ class Solver_Substi(object):
                         accu2 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    else:  # Substitution
+                    else:  # TypeX
                         compare_list4 = ''
                         for q in range(len(list4)):
                             compare_list4 += list4[q]
+                        #todo: encrypt using TypeX
+                        # encrypt to TypeX
                         last = encrypt_subs(compare_list4)
+                        # encrypt to TypeX done
 
                         cnt = 0
                         for q in range(len(list5)):
@@ -938,14 +834,14 @@ class Solver_Substi(object):
                 elif tt == 1:
                     accu2 = accu2 / len(id2)
                     accu_VtoC.append(accu2)
-                    print("Vig to Caeser : ", accu2)
+                    print("Enigma to Lorenz : ", accu2)
                 else:
                     accu3 = accu3 / len(id2)
                     accu_VtoS.append(accu3)
-                    print("Vig to Substitution : ", accu3)
+                    print("Enigma to TypeX : ", accu3)
 
             # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            # Target domain is (0 : plain, 1 : Caeser, 2 : Vigenere)
+            # Target domain is (0 : plain, 1 : Lorenz, 2 : Enigma)
             for tt in range(4):
                 if tt == 3:
                     continue
@@ -990,23 +886,18 @@ class Solver_Substi(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Substitution
+                    last = ''   # for recovered TypeX
 
-                    # decrypt (coz 0 1 2, but no 3) Substitution CT to plain
+                    # decrypt TypeX CT to plain #todo
                     list4 = subst.decrypt(list4)
-                    # decrypt Substitution CT to plain done
+                    # decrypt TypeX CT to plain done
 
-                    if tt == 3 or tt == 0:  # substitution or plain
+                    if tt == 3 or tt == 0:  # TypeX or plain
                         e += 1
                         continue
 
-                    elif (tt) == 1:  
-                        # Caeser encryption
-                        for q in range(len(list4)):
-                            tmp = (ord(list4[q]) - 97 + 3) % 26
-                            tmp = chr(tmp + 97)
-                            last += tmp
-                        # Caeser encryption done
+                    elif (tt) == 1:  # Lorenz
+                        last = lorenz_encrypt(list4)
 
                         cnt = 0
                         for q in range(len(list4)):
@@ -1017,25 +908,8 @@ class Solver_Substi(object):
                         accu2 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    else:  # Vigenere encryption
-                        for q in range(len(list4)):
-                            if q % 4 == 0:
-                                tmp = (ord(list4[q]) - 97 + 3) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 1:
-                                tmp = (ord(list4[q]) - 97 + 4) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            elif q % 4 == 2:
-                                tmp = (ord(list4[q]) - 97 + 5) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                            else:
-                                tmp = (ord(list4[q]) - 97 + 6) % 26
-                                tmp = chr(tmp + 97)
-                                last += tmp
-                        # Vigenere encryption done
+                    else:  # Enigma
+                        last = enigma_encrypt_or_decrypt(list4)
 
                         cnt = 0
                         for q in range(len(list5)):
@@ -1045,17 +919,18 @@ class Solver_Substi(object):
                                 continue
                         accu3 += float((len(list4) - cnt) / len(list4))
                         e += 1
+
                 if tt == 3 or tt == 0:
                     continue
 
                 elif tt == 1:
                     accu2 = accu2 / len(id3)
                     accu_StoC.append(accu2)
-                    print("Subs to Caeser : ", accu2)
+                    print("TypeX to Lorenz : ", accu2)
                 else:
                     accu3 = accu3 / len(id3)
                     accu_StoV.append(accu3)
-                    print("Subs to Vigenere : ", accu3)
+                    print("TypeX to Enigma : ", accu3)
 
             os.makedirs("accumodels/", exist_ok=True)
             AC_path = os.path.join(

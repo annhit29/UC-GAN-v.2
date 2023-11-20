@@ -17,58 +17,6 @@ RAIL_FENCE_KEY = 4
 COLUMNAR_KEY = "hackhack" #in anycase will = "hack" coz cf columnar.py  #order “3 1 2 4”
 TRANSPO_KEY = 8
 
-
-def getkeymatrix(key, key_len):
-    key_mat = [[0]*key_len for i in range(key_len)]
-
-    key = key.lower()
-
-    for i in range(key_len):
-        for j in range(key_len):
-            key_mat[i][j] = ord(key[key_len*i+j]) - 97
-
-    inv = get_inv(key_mat)
-
-    return key_mat
-
-
-def get_inv(key_mat):
-
-    a = key_mat[0][0]
-    d = key_mat[1][1]
-    b = key_mat[0][1]
-    c = key_mat[1][0]
-
-    tmp = a*d - b*c
-
-    ret = 0
-
-    if (gcd(tmp, 26) != 1):
-        print("plz fix keys")
-    else:
-        for i in range(26):
-            if ((tmp * i) % 26 == 1):
-                ret = i
-
-    return ret
-
-
-def gcd(a, b):
-    return b if a == 0 else gcd(b % a, a)
-
-
-class UnNormalize(object):
-    def __init__(self, mean, std):
-        self.mean = mean
-        self.std = std
-
-    def __call__(self, tensor):
-        for t, m, s in zip(tensor, self.mean, self.std):
-            t.mul_(s).add_(m)
-            # the normalize code -> t.sub_(m).div_(s)
-        return tensor
-
-
 class Solver_Transpo(object):
     """Solver for training and testing UC-GAN-v.2"""
 
@@ -81,8 +29,7 @@ class Solver_Transpo(object):
 
         # Model configurations.
         self.c_dim = config.c_dim #=4
-        # print("c_dim from solver.py = ", self.c_dim)
-        self.g_conv_dim = config.g_conv_dim #=32 
+        self.g_conv_dim = config.g_conv_dim
         self.d_conv_dim = config.d_conv_dim
         self.lambda_cls = config.lambda_cls
         self.lambda_rec = config.lambda_rec
@@ -597,7 +544,7 @@ class Solver_Transpo(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Caeser
+                    last = ''   # for recovered rf
 
                     if (tt+1) == 1:  # rf
                         last = str(rf.encryptRailFence(list4, RAIL_FENCE_KEY))
@@ -683,7 +630,6 @@ class Solver_Transpo(object):
                     else:
                         iden = 1
 
-                # print(len(ids))
 
                 e = 0
                 accu1 = 0  # -> 0: Plaintext
@@ -779,7 +725,6 @@ class Solver_Transpo(object):
                     else:
                         iden = 1
 
-                # print(len(ids))
 
                 e = 0
                 accu1 = 0  # -> 0
@@ -809,12 +754,7 @@ class Solver_Transpo(object):
                     elif (tt) == 1:  # Rail-fence
                         # encrypt to Rail-fence
                         last = str(rf.encryptRailFence(list4, RAIL_FENCE_KEY))
-                        #encrypt in Caeser starts:
-                        # for q in range(len(list4)):
-                        #     tmp = (ord(list4[q]) - 97 + 3) % 26
-                        #     tmp = chr(tmp + 97)
-                        #     last += tmp
-                        #encrypt in Caeser done
+                        #encrypt to rf done
                         
                         cnt = 0
                         for q in range(len(list4)):
@@ -882,8 +822,8 @@ class Solver_Transpo(object):
 
                 e = 0
                 accu1 = 0  # -> 0: Plaintext
-                accu2 = 0  # -> 2: Columnar
-                accu3 = 0  # -> 3: Transposition
+                accu2 = 0  # -> 1: rf
+                accu3 = 0  # -> 2: Columnar
                 while e < len(id3):
                     list4 = ''  # for plain
                     list5 = ''  # for target domain tt+1
@@ -896,7 +836,7 @@ class Solver_Transpo(object):
                                 list5 += (chr(97+w))
 
                     # encrypt line
-                    last = ''   # for recovered Columnar
+                    last = ''   # for recovered Transposition
 
                     # decrypt to plain
                     list4 = transpo.decryptMessage(TRANSPO_KEY, list4)
