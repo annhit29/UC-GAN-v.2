@@ -62,6 +62,13 @@ def lorenz_decrypt(strCT):
 # ----Enigma machine related functions----
 
 # Create an Enigma machine with desired rotor and reflector configurations:
+'''
+Enigma encryption is symmetric, which means that the same settings is used to both encrypt or decrypt a message.
+In a real Enigma machine, after each letter is encrypted, the rotors move, changing the internal state, coz the rotor advances its state in one direction.
+When you try to encrypt the already encrypted message, you're starting from a different rotor state, which leads to incorrect decryption.
+To decrypt the message, you need to reset the rotor states to their initial positions, s.t. the Enigma is the same Enigma machine configuration, before calling the encipher method again.
+If you're not resetting the machine state, encrypting the result of the first encryption will produce a different result than encrypting "Hello World" directly.
+'''
 #`engine` is a global variable for Enigma
 engine = enigma.Enigma(
     rotor.ROTOR_Reflector_A, rotor.ROTOR_I, rotor.ROTOR_II, rotor.ROTOR_III,
@@ -117,7 +124,7 @@ def typex_encrypt_or_decrypt(inputMsg):
 
 """Rotor machine class"""
 class Solver_Rotor(object):
-    """Solver for training and testing UC-GAN."""
+    """Solver for training and testing UC-GAN-v.2."""
 
     def __init__(self, data_loader, data_loader_test, config):
         """Initialize configurations."""
