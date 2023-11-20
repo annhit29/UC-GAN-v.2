@@ -3,7 +3,6 @@ from model import Discriminator
 import torch
 import torch.nn.functional as F
 import numpy as np
-import copy
 import os
 
 #----files for Lorenz machine:----
