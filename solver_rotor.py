@@ -6,6 +6,7 @@ import numpy as np
 import copy
 import os
 
+#----files for Lorenz machine:----
 # import lib.lorenz_machine.lorenz.machines as lorenz_cipher
 from lib.lorenz_machine.lorenz.machines import SZ40
 # import lib.lorenz_machine.lorenz.patterns as lorenz_patterns
@@ -13,14 +14,18 @@ from lib.lorenz_machine.lorenz.patterns import KH_CAMS
 # import telegrahy utility library
 from lib.lorenz_machine.lorenz.telegraphy import Teleprinter
 
+#----files for Enigma machine:----
 from pyenigma import enigma, rotor
+
+#----files for TypeX machine:----
+from lib.typex_machine.enigma_typex import *
 
 
 CHARACTERS_NBRS = 100 #type int
 
 # ----Lorenz machine related functions----
 
-# Encrypt line using Lorenz cipher w/ the model SZ40-KH_CAMS:
+# Encrypt line using Lorenz cipher w/ the model SZ40-KH_CAMS. Assume all msgs will be enc./dec. to lowercase:
 def lorenz_encrypt(strPT):
     #1. transform the input PT from str to list format
     listPT = Teleprinter.encode(strPT)
@@ -32,7 +37,10 @@ def lorenz_encrypt(strPT):
     #4. transform the CT list format to str format
     strCT = Teleprinter.decode(listCT) #str CT
     #Encryption done
-    return str(strCT)
+
+    strCT = str(strCT).lower()
+
+    return strCT
 
 # Decrypt line using Lorenz cipher w/ the model SZ40-KH_CAMS:
 def lorenz_decrypt(strCT):
@@ -46,7 +54,10 @@ def lorenz_decrypt(strCT):
     #4. transform the PT list format to str format
     strPT = Teleprinter.decode(listPT)
     #Decryption done
-    return str(strPT)
+
+    strPT = str(strPT).lower()
+
+    return strPT
     
 
 # ----Enigma machine related functions----
@@ -67,10 +78,41 @@ def reset_enigma_machine():
         key="ABC", plugs="AV BS CG DL FU HZ IN KM OW RX"
     )
 
-def enigma_encrypt_or_decrypt(inputCT):
+def enigma_encrypt_or_decrypt(inputMsg):
     reset_enigma_machine() #must always reset the machine before each msg encryption/decryption
-    outputPT = engine.encipher(inputCT) # the encryption function and the decryption function are the same   
-    return outputPT
+    outputMsg = engine.encipher(inputMsg) # the encryption function and the decryption function are the same   
+    return outputMsg
+
+
+# ----TypeX machine related functions----
+#----Set up the TypeX machine----
+t_pb = ""  # Set your plugboard settings here if needed
+t_rotors = "TYPEX_A TYPEX_B TYPEX_C TYPEX_D TYPEX_E"  # 5 TypeX rotors
+t_reflector = "B"  # Choose the reflector for TypeX
+t_ring_settings = "01 01 01 01 01"  # Set ring settings for each rotor
+t_initial_positions = "A A A A A"  # Set initial positions for each rotor
+#----Encryption/Decryption----
+def typex_encrypt_or_decrypt(inputMsg):
+    #1. change to uppercase letters (<- the curr only valid alphabets):
+    inputMsg = str(inputMsg).upper() #todo: this typex only receives uppercase letters, I'll change it to receive A~Z and a~z. I mean: all the letters receivable by Brown Corpus.
+    
+    #must always reset the machine before each msg encryption/decryption (step2.~4.):
+    #2. Create a Plugboard instance
+    plugboard = Plugboard([PlugLead(mapping) for mapping in t_pb.split()])
+    #3. Create a MultiRotor instance for TypeX
+    multirotor = MultiRotor(t_rotors, t_reflector, t_ring_settings, t_initial_positions)
+    #4. Create a TypeX instance with the MultiRotor and Plugboard
+    typex = MultiEnigma(multirotor, plugboard)
+
+    #5. Encrypt/Decrypt the message
+    outputMsg = typex.encode_decode(inputMsg)
+    #Encryption/Decryption done
+
+    #6. change to lowercase letters
+    outputMsg = str(outputMsg).lower()
+
+    return outputMsg
+
 
 
 
@@ -522,8 +564,7 @@ class Solver_Rotor(object):
                             list9 += (chr(97+w))
 
                 # Decrypt line
-                #todo: for typex: understand how to enc.&dec.
-                last3 = subst.decrypt(list8)    # for recovered TypeX
+                last3 = typex_encrypt_or_decrypt(list8)    # for recovered TypeX
 
                 cnt = 0
                 for q in range(len(list8)):
@@ -614,8 +655,8 @@ class Solver_Rotor(object):
                         accu2 += float((len(list4) - cnt) / len(list4))
                         e += 1
 
-                    else:  # TypeX #todo enc.
-                        last = encrypt_subs(list4)
+                    else:  # TypeX
+                        last = typex_encrypt_or_decrypt(list4)
                         # TypeX done
 
                         cnt = 0
@@ -719,8 +760,7 @@ class Solver_Rotor(object):
                         compare_list4 = ''
                         for q in range(len(list4)):
                             compare_list4 += list4[q]
-                        #todo: for the following line: encrypt using TypeX
-                        last = encrypt_subs(compare_list4)
+                        last = typex_encrypt_or_decrypt(compare_list4)
                         # TypeX done
 
                         cnt = 0
@@ -816,9 +856,8 @@ class Solver_Rotor(object):
                         compare_list4 = ''
                         for q in range(len(list4)):
                             compare_list4 += list4[q]
-                        #todo: encrypt using TypeX
                         # encrypt to TypeX
-                        last = encrypt_subs(compare_list4)
+                        last = typex_encrypt_or_decrypt(compare_list4)
                         # encrypt to TypeX done
 
                         cnt = 0
@@ -888,8 +927,8 @@ class Solver_Rotor(object):
                     # encrypt line
                     last = ''   # for recovered TypeX
 
-                    # decrypt TypeX CT to plain #todo
-                    list4 = subst.decrypt(list4)
+                    # decrypt TypeX CT to plain
+                    list4 = typex_encrypt_or_decrypt(list4)
                     # decrypt TypeX CT to plain done
 
                     if tt == 3 or tt == 0:  # TypeX or plain
