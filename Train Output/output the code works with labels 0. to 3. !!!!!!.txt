@@ -1,3 +1,6 @@
+Execution time: 28min
+#GPUs = 1
+
 Start training...
 Epoch 0 D loss: 83.20524597167969 G_loss: 3.072249412536621
 Ceaser to plain :  0.03625

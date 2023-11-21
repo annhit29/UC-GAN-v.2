@@ -189,8 +189,8 @@ class Solver_Substi(object):
         for q in range(x.size(0)):  # for each batch
             xs[q] = torch.matmul(emb, x_total[q])  # 256 * 26 * 26 * 100
 
-        concat_batch = torch.empty(x.size(0), 256, CHARACTERS_NBRS)
-        concat_batch = concat_batch.to(self.device)
+        concat_batch = torch.empty(x.size(0), 256, CHARACTERS_NBRS) #initialization
+        concat_batch = concat_batch.to(self.device) #cast to Tensor type
         for i in range(x.size(0)):
             concat_batch[i] = concat
 

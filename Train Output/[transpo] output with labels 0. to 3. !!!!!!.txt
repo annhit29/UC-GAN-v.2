@@ -1,0 +1,2 @@
+Execution time: 15min
+#GPUs = 2

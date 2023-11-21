@@ -28,54 +28,41 @@ def str2bool(v):
 def main(config):
     # For fast training.
     cudnn.benchmark = True
-    
-    # #  create an Enigma machine with desired rotor and reflector configurations:
-    # engine = enigma.Enigma(rotor.ROTOR_Reflector_A, rotor.ROTOR_I,
-    #                        rotor.ROTOR_II, rotor.ROTOR_III, key="AAA",
-    #                        plugs="AV BS CG DL FU HZ IN KM OW RX")
-    
-    # # use the `engine` to encrypt the message "Hello World.":
-    # secret = engine.encipher("Hello World") #= "Qgqop Vyzxp"
 
-    # '''
-    # Enigma encryption is symmetric, which means that the same settings is used to both encrypt or decrypt a message.
-    # In a real Enigma machine, after each letter is encrypted, the rotors move, changing the internal state, coz the rotor advances its state in one-direction.
-    # When you try to encrypt the already encrypted message, you're starting from a different rotor state, which leads to incorrect decryption.
-    # To decrypt the message, you need to reset the rotor states to their initial positions, s.t. the Enigma is the same Enigma machine configuration, before calling the encipher method again.
-    # If you're not resetting the machine state, encrypting the result of the first encryption will produce a different result than encrypting "Hello World" directly.
-    # '''
-    # # Reset the Enigma machine state after each encryption to decrypt the message:
-    # engine = enigma.Enigma(rotor.ROTOR_Reflector_A, rotor.ROTOR_I,
-    #                        rotor.ROTOR_II, rotor.ROTOR_III, key="AAA",
-    #                        plugs="AV BS CG DL FU HZ IN KM OW RX")
-    # print(engine.encipher(secret)) #decryption, = "Hello World"
-
-
-    data_loader = get_loader(
+    #todo: whyw the hell you receive imgs?
+    #for substitution ciphers dataset, bmp files, already offered:
+    data_loader_substi = get_loader(
         config.data_image_dir,
         config.batch_size,
         config.mode,
         config.num_workers,
     )
 
-    data_loader_test = get_loader(
+
+    data_loader__substi_test = get_loader(
         config.data_test_image_dir,
         config.batch_size,
         config.mode,
         config.num_workers,
     )
 
+    #for transposition ciphers dataset:
+
+
     # Solver for training and testing: #todo: uncomment the solver_cipher you wanna test:
-    solver = Solver_Substi(data_loader, data_loader_test, config)
+    solver = Solver_Substi(data_loader_substi, data_loader__substi_test, config)
+    #todo: actually I can keep the same since I know how to produce bmp PTs, and so CTs. Can just unify variables.
+
+    # data_loader is from train; data_loader_test is from test
     # solver = Solver_Transpo(data_loader, data_loader_test, config)
     # solver = Solver_Enigma(data_loader, data_loader_test, config)
     # solver = Solver_Rotor(data_loader, data_loader_test, config)
 
 
     if config.mode == "train":
-        preds_train = solver.train()
+        solver.train()#preds_train = solver.train()
     # elif config.mode == "test":
-        # solver.test()
+        # solver.test() #todo: uncomment this and change data_loader.py's mode to "test"
     
 
     ## Report results: performance on train and valid/test sets

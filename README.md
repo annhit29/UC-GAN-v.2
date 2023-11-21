@@ -1,7 +1,15 @@
 # UC-GAN-v.2 inspired by: Automated Classical Cipher Emulation Attacks via Unified Unsupervised Generative Adversarial Networks
 
+\
+plain-to-multi-ciphers domain or  multi-ciphers-to-single-plain domain
+
+\
+\
 Torch implementation for learning a mapping between Plain text to Cipher Text
 
+
+\
+\
 <img src="img/img.PNG" width="900px"/>
 
 ## Setup
