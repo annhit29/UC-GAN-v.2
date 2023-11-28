@@ -17,9 +17,10 @@ following Wikipedia articles:
  - https://en.wikipedia.org/wiki/Cryptanalysis_of_the_Lorenz_cipher
 
 """
-from lorenz.rotor import MotorSet
-from lorenz.rotor import Rotor
-from lorenz.rotor import RotorSet
+from lib.lorenz_machine.lorenz.rotor import MotorSet
+from lib.lorenz_machine.lorenz.rotor import Rotor
+from lib.lorenz_machine.lorenz.rotor import RotorSet
+
 
 
 class SZ40:
