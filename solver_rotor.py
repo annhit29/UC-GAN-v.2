@@ -100,7 +100,7 @@ t_initial_positions = "A A A A A"  # Set initial positions for each rotor
 #----Encryption/Decryption----
 def typex_encrypt_or_decrypt(inputMsg):
     #1. change to uppercase letters (<- the curr only valid alphabets):
-    inputMsg = str(inputMsg).upper() #todo: this typex only receives uppercase letters, I'll change it to receive A~Z and a~z. I mean: all the letters receivable by Brown Corpus.
+    inputMsg = str(inputMsg).upper() #this typex only receives uppercase letters, I'll change it to receive A~Z and a~z. I mean: all the letters receivable by Brown Corpus.
     
     #must always reset the machine before each msg encryption/decryption (step2.~4.):
     #2. Create a Plugboard instance
@@ -115,7 +115,7 @@ def typex_encrypt_or_decrypt(inputMsg):
     #Encryption/Decryption done
 
     #6. change to lowercase letters
-    outputMsg = str(outputMsg).lower()
+    outputMsg = str(outputMsg).lower() #once done, convert to lowercase letters
 
     return outputMsg
 
