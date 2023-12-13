@@ -4,6 +4,7 @@ from torch.backends import cudnn
 from data_loader import get_loader
 from solver_substi import Solver_Substi
 from solver_transpo import Solver_Transpo
+from solver_rotor import Solver_Rotor
 import argparse
 import torch
 # from pyenigma import enigma, rotor #https://github.com/cedricbonhomme/pyEnigma/tree/master
@@ -31,7 +32,7 @@ def main(config):
 
     #todo: whyw the hell you receive imgs?
     #for substitution ciphers dataset, bmp files, already offered:
-    data_loader_substi = get_loader(
+    data_loader = get_loader(
         config.data_image_dir,
         config.batch_size,
         config.mode,
@@ -39,7 +40,7 @@ def main(config):
     )
 
 
-    data_loader__substi_test = get_loader(
+    data_loader_test = get_loader(
         config.data_test_image_dir,
         config.batch_size,
         config.mode,
@@ -50,13 +51,13 @@ def main(config):
 
 
     # Solver for training and testing: #todo: uncomment the solver_cipher you wanna test:
-    solver = Solver_Substi(data_loader_substi, data_loader__substi_test, config)
+    # solver = Solver_Substi(data_loader, data_loader_test, config)
     #todo: actually I can keep the same since I know how to produce bmp PTs, and so CTs. Can just unify variables.
 
     # data_loader is from train; data_loader_test is from test
     # solver = Solver_Transpo(data_loader, data_loader_test, config)
     # solver = Solver_Enigma(data_loader, data_loader_test, config)
-    # solver = Solver_Rotor(data_loader, data_loader_test, config)
+    solver = Solver_Rotor(data_loader, data_loader_test, config)
 
 
     if config.mode == "train":
@@ -133,11 +134,11 @@ if __name__ == "__main__":
 
     # Directories.
     # parser.add_argument("--data_image_dir", type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/train") # (run on GoogleColab)
-    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data/train") # (run on Kaggle)
+    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor/train") # (run on Kaggle)
 
 
     parser.add_argument("--data_test_image_dir",
-                        type=str, default="/kaggle/working/UC-GAN-v.2/data/test") # (run on Kaggle)
+                        type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor/test") # (run on Kaggle)
                         #default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/test" if run on GoogleColab
     parser.add_argument('-f')
 

@@ -321,7 +321,7 @@ class Solver_Rotor(object):
 
             # Fetch real images and labels.
             try:
-                x_real, label_org = next(data_iter)
+                x_real, label_org = next(data_iter) #fixme: error on Kaggle
             except:
                 data_iter = iter(data_loader)
                 x_real, label_org = next(data_iter)
