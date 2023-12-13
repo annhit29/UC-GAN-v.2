@@ -213,6 +213,9 @@ class Solver_Substi(object):
         #x_total = []
 
         x_total = torch.empty(0, dtype=torch.float)
+        print(x)
+        print(x.shape)
+        print(x.size(0))
         for q in range(x.size(0)):  # x.size(0) = batchsize
             #simplex = []
             simplex = torch.empty(0, dtype=torch.float)
@@ -228,6 +231,7 @@ class Solver_Substi(object):
 
             simplex = torch.from_numpy(np.array(simplex, dtype=np.float32))
             x_total = torch.cat((x_total, simplex))
+            print("x_total.shape is ", x_total.shape)
 
         x_total = torch.reshape(x_total, (x.size(0), CHARACTERS_NBRS, 26))
         x_total = torch.transpose(x_total, 1, 2)
@@ -493,7 +497,7 @@ class Solver_Substi(object):
                     tmp = (ord(list4[q]) - 97 - 3) % 26
                     tmp = chr(tmp + 97)
                     last += tmp
-                    print("list4 real CT decrypted= ", last)
+                    # print("list4 real CT decrypted= ", last)
 
                 cnt = 0 #counter of how many characters in last differ from the corresponding characters in list5
                 for q in range(len(list4)):

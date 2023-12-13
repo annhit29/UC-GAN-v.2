@@ -261,6 +261,7 @@ class Solver_Rotor(object):
 
             simplex = torch.from_numpy(np.array(simplex, dtype=np.float32))
             x_total = torch.cat((x_total, simplex))
+            print("x_total.shape is ", x_total.shape) # torch.Size([0])
 
         x_total = torch.reshape(x_total, (x.size(0), CHARACTERS_NBRS, 26))
         x_total = torch.transpose(x_total, 1, 2)
