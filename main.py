@@ -134,11 +134,11 @@ if __name__ == "__main__":
 
     # Directories.
     # parser.add_argument("--data_image_dir", type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/train") # (run on GoogleColab)
-    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor/train") # (run on Kaggle)
+    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor_bmp/train") # (run on Kaggle)
 
 
     parser.add_argument("--data_test_image_dir",
-                        type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor/test") # (run on Kaggle)
+                        type=str, default="/kaggle/working/UC-GAN-v.2/data_rotor_bmp/test") # (run on Kaggle)
                         #default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/test" if run on GoogleColab
     parser.add_argument('-f')
 
