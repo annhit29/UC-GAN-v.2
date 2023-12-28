@@ -1,4 +1,4 @@
-# %%writefile /kaggle/working/UC-GAN-v.2/solver_rotor.py
+# %%writefile /kaggle/working/UC-GAN-v.2/solver_rotor_enigma_typex.py
 from model import Generator
 from model import Discriminator
 import torch
@@ -255,8 +255,8 @@ class Solver_Rotor_Enigma_Typex(object):
                 for j in range(len(arr)):
                     # print("round(float(x[q][0][i]), 2) = ", round(float(x[q][0][i]), 2))
                     # print("round(float(arr[j]), 2) = ", round(float(arr[j]), 2))
-                    # if round(float(x[q][0][i]), 2) - 0.01 <= round(float(arr[j]), 2) <= round(float(x[q][0][i]), 2) + 0.01:
-                    if round(float(x[q][0][i]), 2) == round(float(arr[j]), 2):
+                    if round(float(x[q][0][i]), 2) - 0.02 <= round(float(arr[j]), 2) <= round(float(x[q][0][i]), 2) + 0.02: # round(float(x[q][0][i]), 2) +/-0.01
+                    # if round(float(x[q][0][i]), 2) == round(float(arr[j]), 2):
                         # print("jsuis la")
                         tmp[j] = 1
                         # print("tmp is = ",tmp)
@@ -780,7 +780,7 @@ class Solver_Rotor_Enigma_Typex(object):
                         compare_list4 = ''
                         for q in range(len(list4)):
                             compare_list4 += list4[q]
-                        print("compare_list4 =", compare_list4) 
+                        # print("compare_list4 =", compare_list4) 
                         last = typex_encrypt_or_decrypt(compare_list4)
                         # TypeX done
 
