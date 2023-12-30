@@ -1,4 +1,4 @@
-# UC-GAN-v.2 inspired by: Automated Classical Cipher Emulation Attacks via Unified Unsupervised Generative Adversarial Networks
+# UMC-GAN inspired by: Automated Classical Cipher Emulation Attacks via Unified Unsupervised Generative Adversarial Networks
 
 \
 plain-to-multi-ciphers domain or  multi-ciphers-to-single-plain domain
