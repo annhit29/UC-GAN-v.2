@@ -46,7 +46,7 @@ Plaintexts can be rearranged into a ciphertext using a key, scrambling the order
 
 Only samples have been uploaded to test the code above.
 
-Structure
+Structure for substitution ciphers:
 
 - data
   - train
@@ -60,8 +60,29 @@ Structure
     - 2.vigenere
     - 3.substitution
 
+
+Structure for rotor ciphers:
+
+- data
+  - train
+    - 0.plain
+    - 1.enigma
+    - 2.enigma M4
+    - 3.typex
+  - test
+    - 0.plain
+    - 1.enigma
+    - 2.enigma M4
+    - 3.typex
+
+
 ## Train
 
+Example of use of UMC-GAN cryptanalysis model with substitution ciphers
 ```bash
-python main.py
+python main.py --solver_type substitution
+```
+Example of use of UMC-GAN cryptanalysis model with rotor ciphers
+```bash
+python main.py --solver_type rotor_enigma_typex
 ```

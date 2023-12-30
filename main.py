@@ -2,9 +2,9 @@
 
 from torch.backends import cudnn
 from data_loader import get_loader
+
 from solver_substi import Solver_Substi
 from solver_transpo import Solver_Transpo
-from solver_rotor import Solver_Rotor
 from solver_rotor_enigma_typex import Solver_Rotor_Enigma_Typex
 
 import argparse
@@ -52,22 +52,22 @@ def main(config):
     #for transposition ciphers dataset:
 
 
-    # Solver for training and testing: #todo: uncomment the solver_cipher you wanna test:
-    # solver = Solver_Substi(data_loader, data_loader_test, config)
-    #todo: actually I can keep the same since I know how to produce bmp PTs, and so CTs. Can just unify variables.
-
-    # data_loader is from train; data_loader_test is from test
-    # solver = Solver_Transpo(data_loader, data_loader_test, config)
-    # solver = Solver_Enigma(data_loader, data_loader_test, config)
-    # solver = Solver_Rotor(data_loader, data_loader_test, config)
-    solver = Solver_Rotor_Enigma_Typex(data_loader, data_loader_test, config)
-
+    # Solver for training and testing:
+    # Dynamically select the solver based on the solver_type argument:
+    if config.solver_type == "substitution":
+        solver = Solver_Substi(data_loader, data_loader_test, config)
+    elif config.solver_type == "transposition":
+        solver = Solver_Transpo(data_loader, data_loader_test, config)
+    elif config.solver_type == "rotor_enigma_typex":
+        solver = Solver_Rotor_Enigma_Typex(data_loader, data_loader_test, config)
+    else:
+        raise ValueError("Invalid solver type")
+    
 
     if config.mode == "train":
         solver.train()#preds_train = solver.train()
-    # elif config.mode == "test":
-        # solver.test() #todo: uncomment this and change data_loader.py's mode to "test"
-    
+    elif config.mode == "test":
+        solver.test()
 
     ## Report results: performance on train and valid/test sets
     # acc = accuracy_fn(preds_train, ytrain)
@@ -129,6 +129,10 @@ if __name__ == "__main__":
     parser.add_argument(  # 0.999
         "--beta2", type=float, default=0.9, help="beta2 for Adam optimizer"
     )
+    parser.add_argument("--solver_type", type=str, default="rotor_enigma_typex",
+                    choices=["substitution", "transposition", "rotor_enigma_typex"],
+                    help="type of solver to use")
+
 
     # Miscellaneous.
     parser.add_argument("--num_workers", type=int, default=1)
