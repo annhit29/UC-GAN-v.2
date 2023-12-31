@@ -55,28 +55,10 @@ def main(config):
     # Solver for training and testing:
     # Dynamically select the solver based on the solver_type argument:
     if config.solver_type == "substitution":
-        # Directories.  #todo: the dataset in data_rotor_txt/test was a copypasta from data_rotor_txt/train just to let the code training part run.
-        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data/train") # (run on Kaggle)
-
-        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
-                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data/test") # (run on Kaggle)
-
         solver = Solver_Substi(data_loader, data_loader_test, config)
     elif config.solver_type == "transposition":        
-        # Directories.  #todo: the dataset in data_rotor_txt/test was a copypasta from data_rotor_txt/train just to let the code training part run.
-        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data_transpo_bmp/train") # (run on Kaggle)
-
-        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
-                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data_transpo_bmp/test") # (run on Kaggle)
-
         solver = Solver_Transpo(data_loader, data_loader_test, config)
     elif config.solver_type == "rotor_enigma_typex":
-        # Directories.
-        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/train") # (run on Kaggle)
-
-        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
-                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/test") # (run on Kaggle)
-
         solver = Solver_Rotor_Enigma_Typex(data_loader, data_loader_test, config)
     else:
         raise ValueError("Invalid solver type")
@@ -91,7 +73,6 @@ def main(config):
     # acc = accuracy_fn(preds_train, ytrain)
     # macrof1 = macrof1_fn(preds_train, ytrain)
     # print(f"\nTrain set: accuracy = {acc:.3f}% - F1-score = {macrof1:.6f}")
-
 
 
 if __name__ == "__main__":
@@ -158,6 +139,34 @@ if __name__ == "__main__":
                         choices=["train", "test"])
 
     
+    # Parse the arguments up to this point to get the solver_type
+    preliminary_args, _ = parser.parse_known_args()
+    solver_type = preliminary_args.solver_type
+
+    # Dynamically set the directory arguments based on the solver_type
+    if solver_type == "substitution":
+        # Directories.  #todo: the dataset in data_rotor_txt/test was a copypasta from data_rotor_txt/train just to let the code training part run.
+        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data/train") # (run on Kaggle)
+
+        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
+                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data/test") # (run on Kaggle)
+
+    elif solver_type == "transposition":
+        # Directories.  #todo: the dataset in data_rotor_txt/test was a copypasta from data_rotor_txt/train just to let the code training part run.
+        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data_transpo_bmp/train") # (run on Kaggle)
+
+        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
+                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data_transpo_bmp/test") # (run on Kaggle)
+
+    elif solver_type == "rotor_enigma_typex":
+        # Directories.
+        parser.add_argument("--data_image_dir", type=str, default=r"/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/train") # (run on Kaggle)
+
+        parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
+                            type=str, default=r"/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/test") # (run on Kaggle)
+    else:
+        raise ValueError("Invalid solver type")
+
     parser.add_argument('-f')
 
     config = parser.parse_args()
