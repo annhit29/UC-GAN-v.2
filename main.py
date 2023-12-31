@@ -79,7 +79,7 @@ def main(config):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    # Model configuration.
+    # Model configuration (hyperparameters).
     parser.add_argument(
         "--c_dim", type=int, default=4, help="dimension of domain labels (1st dataset)"
     )
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         "--lambda_gp", type=float, default=10, help="weight for gradient penalty"
     )
 
-    # Training configuration.
+    # Training configuration (hyperparameters).
     parser.add_argument("--batch_size", type=int,
                         default=32, help="mini-batch size")
     parser.add_argument(
@@ -141,12 +141,16 @@ if __name__ == "__main__":
 
     # Directories.  #todo: the dataset in data_rotor_txt/test was a copypasta from data_rotor_txt/train just to let the code training part run.
     # parser.add_argument("--data_image_dir", type=str, default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/train") # (run on GoogleColab)
-    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/train") # (run on Kaggle)
+    parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_transpo_bmp\train") # (run on Kaggle)
+    # parser.add_argument("--data_image_dir", type=str, default="/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/train") # (run on Kaggle)
 
 
     parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
-                        type=str, default="/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/test") # (run on Kaggle)
+                        type=str, default="/kaggle/working/UC-GAN-v.2/data_transpo_bmp/test") # (run on Kaggle)
                         #default="/content/UC-GAN-Unified-cipher-generative-adversarial-network/data/test" if run on GoogleColab
+    # parser.add_argument("--data_test_image_dir", #todo: the dataset in data_rotor_bmp/test was a copypasta from data_rotor_bmp/train just to let the code training part run. 
+    #                     type=str, default="/kaggle/working/UC-GAN-v.2/data_enigma_typex_bmp/test") # (run on Kaggle)
+
     parser.add_argument('-f')
 
     config = parser.parse_args()
