@@ -210,10 +210,8 @@ class Solver_Transpo(object):
 
         # Start training.
         print("Start training...")
-        print("outside for loop")
         # start_time = time.time()
         for i in range(start_iters, self.num_iters, 10000):
-            # print("iiiiiiiiiii")
 
             '''warmup_constant in lr_schemes.py'''
 
@@ -260,8 +258,8 @@ class Solver_Transpo(object):
             # USING Simplex function
             ######################################
             x_groundtruth = self.Simplex(x_real)  # batch,  26, 100
-            print("coucou")
-            print("x_groundtruth = ", x_groundtruth)
+            # print("coucou")
+            # print("x_groundtruth = ", x_groundtruth)
             x_real_tmp = self.StoE2(x_groundtruth)  # batch, 256, 100
 
             # embedding line : (100, 26) * (26, 256) = (100, 256)
