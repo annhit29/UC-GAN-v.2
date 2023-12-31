@@ -148,7 +148,10 @@ class Solver_Transpo(object):
             for i in range(x.size(2)):
                 tmp = [0 for k in range(len(arr))]
                 for j in range(len(arr)):
-                    if round(float(x[q][0][i]), 4) == round(float(arr[j]), 4):
+                    print("round(float(x[q][0][i]), 2) = ", round(float(x[q][0][i]), 2))
+                    print("round(float(arr[j]), 2) = ", round(float(arr[j]), 2))
+#                     if round(float(x[q][0][i]), 2) - 0.02 <= round(float(arr[j]), 2) <= round(float(x[q][0][i]), 2) + 0.02: # round(float(x[q][0][i]), 2) +/-0.02 <- due to my implementation for generating BMPs in `txt2bmp/py`
+                    if round(float(x[q][0][i]), 2) == round(float(arr[j]), 2):
                         tmp[j] = 1
                         # simplex.append(tmp)
                         tmp = torch.from_numpy(np.array(tmp, dtype=np.float32))
@@ -157,7 +160,8 @@ class Solver_Transpo(object):
 
             simplex = torch.from_numpy(np.array(simplex, dtype=np.float32))
             x_total = torch.cat((x_total, simplex))
-
+        
+        print("x.size(0) = ", x.size(0))
         x_total = torch.reshape(x_total, (x.size(0), 100, 26))
         x_total = torch.transpose(x_total, 1, 2)
         x_total = x_total.to(self.device, dtype=torch.float)
@@ -205,9 +209,11 @@ class Solver_Transpo(object):
         accu_StoV = []
 
         # Start training.
-        print("Start training...")
+        print("Start training... yoyo")
+        print("outside for loop")
         # start_time = time.time()
         for i in range(start_iters, self.num_iters, 10000):
+            print("iiiiiiiiiii")
 
             '''warmup_constant in lr_schemes.py'''
 
@@ -254,7 +260,8 @@ class Solver_Transpo(object):
             # USING Simplex function
             ######################################
             x_groundtruth = self.Simplex(x_real)  # batch,  26, 100
-            # print("x_groundtruth = ", x_groundtruth)
+            print("coucou")
+            print("x_groundtruth = ", x_groundtruth)
             x_real_tmp = self.StoE2(x_groundtruth)  # batch, 256, 100
 
             # embedding line : (100, 26) * (26, 256) = (100, 256)
