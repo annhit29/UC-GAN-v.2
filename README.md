@@ -82,6 +82,10 @@ Example of use of UMC-GAN cryptanalysis model with substitution ciphers
 ```bash
 python main.py --solver_type substitution
 ```
+Example of use of UMC-GAN cryptanalysis model with transposition ciphers
+```bash
+python main.py --solver_type transposition
+```
 Example of use of UMC-GAN cryptanalysis model with rotor ciphers
 ```bash
 python main.py --solver_type rotor_enigma_typex
