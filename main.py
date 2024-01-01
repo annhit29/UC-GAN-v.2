@@ -113,8 +113,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num_iters",
         type=int,
-        default=1054400,  # 200epoch / 1ep = 5272
-        help="number of total iterations for training D",
+        default=1581600,#1318000,#1054400,  # 200epoch / 1ep = 5272
+        help="number of total iterations for training D and G",
     )
     parser.add_argument(  # 0.0001
         "--g_lr", type=float, default=0.00018, help="learning rate for G"
