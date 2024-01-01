@@ -82,6 +82,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--c_dim", type=int, default=4, help="dimension of domain labels (1st dataset)"
     )
+    parser.add_argument("--solver_type", type=str, default="rotor_enigma_typex",
+                choices=["substitution", "transposition", "rotor_enigma_typex"],
+                help="type of solver to use")
     parser.add_argument(
         "--g_conv_dim",
         type=int,
@@ -128,9 +131,6 @@ if __name__ == "__main__":
     parser.add_argument(  # 0.999
         "--beta2", type=float, default=0.9, help="beta2 for Adam optimizer"
     )
-    parser.add_argument("--solver_type", type=str, default="rotor_enigma_typex",
-                    choices=["substitution", "transposition", "rotor_enigma_typex"],
-                    help="type of solver to use")
 
 
     # Miscellaneous.
